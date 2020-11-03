@@ -6,7 +6,6 @@
 #define IPCFLASHER_CANCONTROLLER_H
 
 #include <string>
-#include <netinet/in.h>
 #include <functional>
 #include <vector>
 
