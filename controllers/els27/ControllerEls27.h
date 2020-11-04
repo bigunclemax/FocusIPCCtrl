@@ -33,7 +33,7 @@ public:
     int set_ecu_address(unsigned ecu_address) override;
     int set_protocol(CAN_PROTO protocol) override;
 
-    void RAW_transaction(std::vector<uint8_t> &data) override;
+    int RAW_transaction(std::vector<uint8_t> &data) override;
 };
 
 

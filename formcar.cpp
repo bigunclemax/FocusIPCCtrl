@@ -72,26 +72,26 @@ void FormCar::setupSimulator() {
 
     /* Speed */
     connect(ui->spinBox_Speed, QOverload<int>::of(&QSpinBox::valueChanged),
-            [=](int i){ g_speed = i; });
+            [this](int i){ g_speed = i; });
 
     /* RPM */
     connect(ui->spinBox_RPM, QOverload<int>::of(&QSpinBox::valueChanged),
-            [=](int i){ g_rpm = i; });
+            [this](int i){ g_rpm = i; });
 
     /* Engine temp */
     connect(ui->spinBox_Temp, QOverload<int>::of(&QSpinBox::valueChanged),
-            [=](int i){ g_eng_temp = i; });
+            [this](int i){ g_eng_temp = i; });
 
     /* Fuel level */
     connect(ui->spinBox_Fuel, QOverload<int>::of(&QSpinBox::valueChanged),
-            [=](int i){ g_fuel = i; });
+            [this](int i){ g_fuel = i; });
 
     /* Turn left */
     connect(ui->pushButton_LeftTurn, QOverload<bool>::of(&QPushButton::toggled),
-            [=](bool toggled){ g_turn_l = toggled; });
+            [this](bool toggled){ g_turn_l = toggled; });
 
     /* Turn right */
     connect(ui->pushButton_LeftTurn, QOverload<bool>::of(&QPushButton::toggled),
-            [=](bool toggled){ g_turn_r = toggled; });
+            [this](bool toggled){ g_turn_r = toggled; });
 
 }

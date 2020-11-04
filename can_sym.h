@@ -14,7 +14,7 @@ std::mutex m_mutex;
 void fakeFuel(CanController *controller, uint16_t fuel) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
-    controller->set_ecu_address(0x320);
+    if(controller->set_ecu_address(0x320)) return;
 
     //TODO: doesn't working correctly
     fuel = 0xfff - (fuel * 0x2ff / 100); //percents from 0 to 100
@@ -29,7 +29,7 @@ void fakeFuel(CanController *controller, uint16_t fuel) {
 void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
-    controller->set_ecu_address(0x110);
+    if(controller->set_ecu_address(0x110)) return;
 
     rpm /= 2;
     speed = speed * 10000 / 105; //km\h
@@ -45,7 +45,7 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
 void fakeIgnition(CanController *controller) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
-    controller->set_ecu_address(0x080);
+    if(controller->set_ecu_address(0x080)) return;
 
     std::vector<uint8_t> data = { 0x74, 0x63, 0xC7, 0x80, 0x10, 0x7A };
     controller->RAW_transaction(data);
@@ -54,7 +54,7 @@ void fakeIgnition(CanController *controller) {
 void fakeEngineTemp(CanController *controller, uint8_t temp) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
-    controller->set_ecu_address(0x360);
+    if(controller->set_ecu_address(0x360)) return;
 
     temp += 60; //C
 
@@ -65,7 +65,7 @@ void fakeEngineTemp(CanController *controller, uint8_t temp) {
 void fakeTurn(CanController *controller, bool left, bool right) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
-    controller->set_ecu_address(0x03A);
+    if(controller->set_ecu_address(0x03A)) return;
     std::vector<uint8_t>  data1 = { static_cast<unsigned char>(0x82u | left),
                                     static_cast<unsigned char>(0x83u | (right? 0xCu : 0)),
                                     0x00, 0x02, 0x80, 0x00, 0x00, 0x00};
@@ -74,7 +74,7 @@ void fakeTurn(CanController *controller, bool left, bool right) {
 void resetDash(CanController *controller) {
     const std::lock_guard<std::mutex> lock(m_mutex);
     static bool t = false;
-    controller->set_ecu_address(0x720);
+    if(controller->set_ecu_address(0x720)) return;
     std::vector<uint8_t>  data = {0x02,0x11,0x01,0x00,0x00,0x00,0x00,0x00};
     controller->RAW_transaction(data);
 }

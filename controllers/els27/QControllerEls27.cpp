@@ -8,7 +8,7 @@
 #include <utility>
 #include "QControllerEls27.h"
 
-const uint32_t QControllerEls27::baud_arr[] = {
+const uint32_t SerialHandler::baud_arr[] = {
         19200,
         38400,
         57600,
@@ -27,60 +27,278 @@ const uint32_t QControllerEls27::baud_arr[] = {
         3500000,
         4000000 };
 
-const int QControllerEls27::baud_arr_sz = sizeof(baud_arr) / sizeof(baud_arr[0]);
+const int SerialHandler::baud_arr_sz = sizeof(baud_arr) / sizeof(baud_arr[0]);
 
-QControllerEls27::QControllerEls27(settings init_settings)
-    : init_settings(std::move(init_settings))
-{}
+#define PRINT_HEX
+static void print_buffer(int rdlen, const unsigned char *const buf, int isWrite) {
 
-std::pair<int, std::string> QControllerEls27::serial_transaction(const std::string &req) {
+    unsigned char _str[rdlen+1];
+    _str[rdlen] = 0;
 
-    std::cerr << "W:" << req << std::endl << std::endl;
+    printf("%s %d:", isWrite? "W" : "R", rdlen);
+    /* first display as hex numbers then ASCII */
+    for (int i =0; i < rdlen; i++) {
+#ifdef PRINT_HEX
+        printf(" 0x%x", buf[i]);
+#endif
+        if (buf[i] < ' ')
+            _str[i] = '.';   /* replace any control chars */
+        else
+            _str[i] = buf[i];
+    }
+    printf("\n    \"%s\"\n\n", _str);
+}
 
-    write(req.c_str());
+SerialHandler::SerialHandler(sControllerSettings init_settings, QObject *parent) :
+        QThread(parent),
+        m_init_settings(std::move(init_settings)),
+        m_portName(m_init_settings.port_name.c_str())
+{
+}
+
+SerialHandler::~SerialHandler()
+{
+    m_mutex.lock();
+    m_quit = true;
+    m_cond.wakeOne();
+    m_mutex.unlock();
+    wait();
+}
+
+void SerialHandler::transaction(int waitTimeout, const std::string &request)
+{
+    usedBytes.acquire();
+    const QMutexLocker locker(&m_mutex);
+    m_waitTimeout = waitTimeout;
+    m_request = request;
+    if (!isRunning())
+        start();
+    else
+        m_cond.wakeOne();
+}
+
+void SerialHandler::run()
+{
+
+    bool currentPortNameChanged = false;
+
+    m_mutex.lock();
+    QString currentPortName;
+    if (currentPortName != m_portName) {
+        currentPortName = m_portName;
+        currentPortNameChanged = true;
+    }
+
+    int currentWaitTimeout = m_waitTimeout;
+    std::string currentRequest = m_request;
+    m_mutex.unlock();
+    QSerialPort serial;
+
+    if (currentPortName.isEmpty()) {
+        std::cerr << "No port name specified\n";
+        usedBytes.release();
+        return;
+    }
+
+    while (!m_quit) {
+        if (currentPortNameChanged) {
+            serial.close();
+            serial.setPortName(currentPortName);
+
+            if (!serial.open(QIODevice::ReadWrite)) {
+                std::cerr << "Can't open " << m_portName.toStdString() << ", error code " << serial.error() << std::endl;
+                usedBytes.release();
+                return;
+            }
+
+            if(_init(serial)) {
+                std::cerr << "Can't init els device" << std::endl;
+                usedBytes.release();
+                return;
+            }
+        }
+        // write request
+        if(serial_transaction(serial, currentRequest, currentWaitTimeout).first) {
+            std::cerr << "serial_transaction error" << std::endl;
+        }
+        usedBytes.release();
+#ifdef _NO
+        const QByteArray requestData = currentRequest.toUtf8();
+        serial.write(requestData);
+        if (serial.waitForBytesWritten(m_waitTimeout)) {
+            // read response
+            if (serial.waitForReadyRead(currentWaitTimeout)) {
+                QByteArray responseData = serial.readAll();
+                while (serial.waitForReadyRead(10))
+                    responseData += serial.readAll();
+
+                const QString response = QString::fromUtf8(responseData);
+//                emit this->response(response);
+            } else {
+                std::cerr << "Wait read response timeout \n";
+//                emit timeout(tr("Wait read response timeout %1")
+//                                     .arg(QTime::currentTime().toString()));
+            }
+        } else {
+            std::cerr << "Wait write request timeout \n";
+//            emit timeout(tr("Wait write request timeout %1")
+//                                 .arg(QTime::currentTime().toString()));
+        }
+#endif
+        m_mutex.lock();
+        m_cond.wait(&m_mutex);
+        if (currentPortName != m_portName) {
+            currentPortName = m_portName;
+            currentPortNameChanged = true;
+        } else {
+            currentPortNameChanged = false;
+        }
+        currentWaitTimeout = m_waitTimeout;
+        currentRequest = m_request;
+        m_mutex.unlock();
+    }
+}
+
+
+std::pair<int, std::string>
+SerialHandler::serial_transaction(QSerialPort &serial, const std::string &req, int timeout) {
+
+    print_buffer(req.size(), reinterpret_cast<const unsigned char *const>(req.data()), true);
+
+    serial.write(req.c_str());
+    if(!serial.waitForBytesWritten()) {
+        std::cerr << "waitForBytesWritten timeout\n";
+        return {-1, ""};
+    }
 
     uint8_t buffer[4096];
     unsigned response_max_len = sizeof(buffer);
     int idx = 0;
     do {
-        if(!waitForReadyRead(1000)) {
-            printf("waitForReadyRead timeout\n");
-            break;
+        if(!serial.waitForReadyRead(timeout)) {
+            std::cerr << "waitForReadyRead timeout\n";
+            return {-1, ""};
         }
-        auto rdlen = readLine(reinterpret_cast<char *>(&buffer[idx]), response_max_len - idx - 1);
+        auto rdlen = serial.read(reinterpret_cast<char *>(&buffer[idx]), response_max_len - idx - 1);
         if (rdlen > 0) {
             idx += rdlen;
             if('>' == buffer[idx-1]  || '>' == buffer[idx-2]) {
                 break;
             }
         } else if (rdlen < 0) {
-            printf("Error from read. Reared %ld Error: %s", rdlen, strerror(errno));
+            std::cerr << "Error from read. Read " << rdlen << " bytes\n";
             return {-1, ""};
         } else {  /* rdlen == 0 */
-            printf("Nothing read. EOF?\n");
+            std::cerr << "Nothing read. EOF?\n";
             return {-1, ""};
         }
         /* repeat read */
     } while (true);
 
-    std::string s(buffer, buffer+idx);
-    std::replace( s.begin(), s.end(), '\r', '-');
-    std::cerr << "R:" << s << std::endl << std::endl;
+    print_buffer(idx, reinterpret_cast<const unsigned char *const>(buffer), false);
 
     return {0, std::string(buffer, buffer+idx)};
 }
 
-void QControllerEls27::control_msg(const std::string &req) {
-    serial_transaction(req + '\r');
+int SerialHandler::_init(QSerialPort& serial) {
+
+    if(!serial.setStopBits(QSerialPort::OneStop))
+    {
+        throw std::runtime_error(QString(("failed to set stop bits on port %1")).arg(serial.portName()).toLatin1());
+    }
+    if(!serial.setParity(QSerialPort::NoParity))
+    {
+        throw std::runtime_error(QString(("failed to set parity bits on port %1")).arg(serial.portName()).toLatin1());
+    }
+    if(!serial.setFlowControl(QSerialPort::NoFlowControl))
+    {
+        throw std::runtime_error(QString(("failed to set flow control on port %1")).arg(serial.portName()).toLatin1());
+    }
+
+    serial.clear();
+
+
+    if(m_init_settings.baud) {
+        if(test_baudrate(serial, m_init_settings.baud)) {
+            throw std::runtime_error("failed to connect adapter");
+        }
+    } else {
+        if(!detect_baudrate(serial)) {
+            throw std::runtime_error("failed to connect adapter");
+        }
+    }
+#ifdef _DIS
+    if(init_settings.maximize) {
+        maximize_baudrate();
+    }
+#endif
+
+    std::cerr << "Els baud rate: " << serial.baudRate() << std::endl;
+
+    serial_transaction(serial, "\r");
+    serial_transaction(serial, "ATE1\r"); //echo off
+    serial_transaction(serial, "ATL0\r"); //linefeeds off
+    serial_transaction(serial, "ATS0\r"); //spaces off
+    serial_transaction(serial, "STPO\r");  //ATBI Open current protocol.
+    serial_transaction(serial, "ATAL\r");  //allow long messages
+    serial_transaction(serial, "ATAT0\r"); //disable adaptive timing
+    serial_transaction(serial, "ATCAF0\r");//CAN auto formatting off
+    serial_transaction(serial, "ATST01\r");  //Set timeout to hh(13) x 4 ms
+    serial_transaction(serial, "ATR0\r");    //Responses on
+    return 0;
 }
 
-void QControllerEls27::RAW_transaction(std::vector<uint8_t> &data) {
+int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
+
+    printf("Check baud: %d\n", baud);
+
+    if(!serial.setBaudRate(baud))
+    {
+        return -1;
+    }
+
+    /* clear */
+    if(serial_transaction(serial,"?\r", 500).first) {
+        return -1;
+    }
+
+    auto r = serial_transaction(serial,"ATWS\r", 500);
+    if(r.first) {
+        return -1;
+    }
+
+    if (r.second.find("ELM327 v1.3a") == std::string::npos) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int SerialHandler::detect_baudrate(QSerialPort& serial) {
+    for(unsigned int i : baud_arr) {
+        if(!test_baudrate(serial, i))
+            return (int)i;
+    }
+    return 0;
+}
+
+QControllerEls27::QControllerEls27(sControllerSettings init_settings)
+    : comPort(std::move(init_settings))
+{}
+
+int QControllerEls27::control_msg(const std::string &req) {
+    comPort.transaction(3000, req + '\r');
+    return 0; //TODO: add return code
+}
+
+int QControllerEls27::RAW_transaction(std::vector<uint8_t> &data) {
     auto tx_size = data.size() > CAN_frame_sz ? 8 : data.size();
     std::string io_buff;
     io_buff.resize(tx_size * 2 + 1);
     io_buff[tx_size * 2] = '\r';
     hex2ascii(data.data(), tx_size, io_buff.data());
-    serial_transaction(io_buff);
+    comPort.transaction(3000, io_buff);
+    return 0; //TODO: add return code
 }
 
 int QControllerEls27::set_ecu_address(unsigned int ecu_address) {
@@ -97,92 +315,9 @@ int QControllerEls27::set_protocol(CanController::CAN_PROTO protocol) {
     return 0;
 }
 
-int QControllerEls27::init() {
-
-    setPortName(QString(init_settings.port_name.c_str()));
-    if (!open(QIODevice::ReadWrite)) {
-        throw std::runtime_error(QString(("failed to open port %1")).arg(portName()).toLatin1());
-    }
-    if(!setStopBits(QSerialPort::OneStop))
-    {
-        throw std::runtime_error(QString(("failed to set stop bits on port %1")).arg(portName()).toLatin1());
-    }
-    if(!setParity(QSerialPort::NoParity))
-    {
-        throw std::runtime_error(QString(("failed to set parity bits on port %1")).arg(portName()).toLatin1());
-    }
-    if(!setFlowControl(QSerialPort::NoFlowControl))
-    {
-        throw std::runtime_error(QString(("failed to set flow control on port %1")).arg(portName()).toLatin1());
-    }
-
-    clear();
-
-    if(init_settings.baud) {
-        if(test_baudrate(init_settings.baud)) {
-            throw std::runtime_error("failed to connect adapter");
-        }
-    } else {
-        if(!detect_baudrate()) {
-            throw std::runtime_error("failed to connect adapter");
-        }
-    }
-
-    if(init_settings.maximize) {
-        maximize_baudrate();
-    }
-
-    std::cerr << "Els baud rate: " << baudRate() << std::endl;
-
-    control_msg("\r");
-    control_msg("ATE0"); //echo off
-    control_msg("ATL0"); //linefeeds off
-    control_msg("ATS0"); //spaces off
-    control_msg("STPO");  //ATBI Open current protocol.
-    control_msg("ATAL");  //allow long messages
-    control_msg("ATAT0"); //disable adaptive timing
-    control_msg("ATCAF0");//CAN auto formatting off
-    control_msg("ATST01");  //Set timeout to hh(13) x 4 ms
-    control_msg("ATR0");    //Responses on
-    return 0;
-}
-
-int QControllerEls27::test_baudrate(uint32_t baud) {
-
-    printf("Check baud: %d\n", baud);
-
-    if(!setBaudRate(baud))
-    {
-        return -1;
-    }
-
-    /* clear */
-    if(serial_transaction("?\r").first) {
-        return -1;
-    }
-
-    auto r = serial_transaction("ATWS\r");
-    if(r.first) {
-        return -1;
-    }
-
-    if (r.second.find("ELM327 v1.3a") == std::string::npos) {
-        return -1;
-    }
-
-    return 0;
-}
-
-int QControllerEls27::detect_baudrate() {
-    for(unsigned int i : baud_arr) {
-        if(!test_baudrate(i))
-            return i;
-    }
-    return 0;
-}
-
 int QControllerEls27::set_baudrate(uint32_t baud) {
 
+#ifdef _DIS
     auto curr_baud = baudRate();
 
     const unsigned io_buff_max_len = 1024; //alloc 1kb buffer
@@ -241,12 +376,13 @@ int QControllerEls27::set_baudrate(uint32_t baud) {
 cleanup:
 
     setBaudRate(curr_baud);
-
+#endif
     return -1;
 }
 
 int QControllerEls27::maximize_baudrate() {
 
+#ifdef _DIS
     /* set baudrate timeout in ms */
     if(serial_transaction("STBRT 1000\r").first) {
         return -1;
@@ -269,4 +405,5 @@ int QControllerEls27::maximize_baudrate() {
     }
 
     return baud;
+#endif
 }

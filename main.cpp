@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         if(Dialog::els27 == type) {
             auto settings_from_dialog = init_dialog->getSettings(type);
             /* pretty ugly part */
-            QControllerEls27::settings controller_settings { .port_name = settings_from_dialog.port_name,
+            sControllerSettings controller_settings { .port_name = settings_from_dialog.port_name,
                                                              .baud = static_cast<uint32_t>(!settings_from_dialog.autodetect ? settings_from_dialog.baudrate : 0),
                                                              .maximize = settings_from_dialog.maximize };
             controller = std::make_unique<QControllerEls27>(controller_settings);
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
             return;
         }
 
-        controller->init();
+
         form = std::make_unique<FormCar>(std::move(controller));
     });
 

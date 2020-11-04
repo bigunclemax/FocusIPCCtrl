@@ -6,34 +6,68 @@
 #define GUI_QCONTROLLERELS27_H
 
 #include <QSerialPort>
+#include <QThread>
+#include <QMutex>
+#include <QSemaphore>
+#include <QWaitCondition>
 #include "../CanController.h"
 
-class QControllerEls27: public CanController, public QSerialPort {
+struct sControllerSettings {
+    std::string port_name;
+    uint32_t    baud;
+    bool        maximize;
+};
+
+class SerialHandler : public QThread {
+
+    Q_OBJECT
+
+public:
+    SerialHandler(sControllerSettings init_settings, QObject *parent = nullptr);
+    ~SerialHandler() override;
+
+    void transaction(int waitTimeout, const std::string &request);
+
+private:
+    void run() override;
+    int _init(QSerialPort& serial);
+    int test_baudrate(QSerialPort& serial, uint32_t baud);
+    int detect_baudrate(QSerialPort& serial);
+    std::pair<int, std::string> serial_transaction(QSerialPort &serial, const std::string &req, int timeout = 1000);
+
+    static const uint32_t   baud_arr[];
+    static const int        baud_arr_sz;
+
+    sControllerSettings     m_init_settings;
+
+    QString     m_portName;
+    std::string m_request;
+    int m_waitTimeout = 0;
+    QMutex m_mutex;
+    QWaitCondition m_cond;
+    bool m_quit = false;
+    QSemaphore usedBytes = QSemaphore(1);
+};
+
+class QControllerEls27: public CanController {
 
 public:
 
-    struct settings {
-        std::string port_name;
-        uint32_t    baud;
-        bool        maximize;
-    };
-
-    explicit QControllerEls27(settings init_settings);
+    explicit QControllerEls27(sControllerSettings init_settings);
     QControllerEls27(QControllerEls27 const &) = delete;
 
-    int init() override;
+    int init() override { return 0; };
     int set_ecu_address(unsigned ecu_address) override;
     int set_protocol(CAN_PROTO protocol) override;
 
-    void RAW_transaction(std::vector<uint8_t> &data) override;
+    int RAW_transaction(std::vector<uint8_t> &data) override;
     int maximize_baudrate();
-    int detect_baudrate();
+
 
 private:
     int set_baudrate(uint32_t baud);
-    int test_baudrate(uint32_t baud);
-    std::pair<int, std::string> serial_transaction(const std::string &req);
-    void control_msg(const std::string &req);
+
+    int control_msg(const std::string &req);
     inline static void hex2ascii(const uint8_t* bin, unsigned int binsz, char* result)
     {
         unsigned char     hex_str[]= "0123456789ABCDEF";
@@ -45,10 +79,7 @@ private:
         }
     };
 
-    settings init_settings;
-
-    static const uint32_t baud_arr[];
-    static const int baud_arr_sz;
+    SerialHandler comPort;
 };
 
 #endif //GUI_QCONTROLLERELS27_H
