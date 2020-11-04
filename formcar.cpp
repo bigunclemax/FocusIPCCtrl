@@ -23,7 +23,7 @@ void FormCar::setupSimulator() {
 
     /* reset dash */
     resetDash(static_cast<CanController*>(static_cast<CanController*>(controller.get())));
-    sleep(2);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     /* ignition */
     t_ignition = new  IPCthread(250000);

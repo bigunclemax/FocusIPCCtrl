@@ -7,7 +7,6 @@
 
 #include <mutex>
 #include "controllers/CanController.h"
-#include <unistd.h>
 #include <vector>
 
 std::mutex m_mutex;

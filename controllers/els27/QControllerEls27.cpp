@@ -2,6 +2,7 @@
 // Created by user on 30.10.2020.
 //
 
+#include <sstream>
 #include <iomanip>
 #include <iostream>
 #include <utility>
@@ -46,7 +47,7 @@ std::pair<int, std::string> QControllerEls27::serial_transaction(const std::stri
             printf("waitForReadyRead timeout\n");
             break;
         }
-        ssize_t rdlen = readLine(reinterpret_cast<char *>(&buffer[idx]), response_max_len - idx - 1);
+        auto rdlen = readLine(reinterpret_cast<char *>(&buffer[idx]), response_max_len - idx - 1);
         if (rdlen > 0) {
             idx += rdlen;
             if('>' == buffer[idx-1]  || '>' == buffer[idx-2]) {
@@ -75,11 +76,11 @@ void QControllerEls27::control_msg(const std::string &req) {
 
 void QControllerEls27::RAW_transaction(std::vector<uint8_t> &data) {
     auto tx_size = data.size() > CAN_frame_sz ? 8 : data.size();
-    char io_buff[tx_size * 2 + 1];
+    std::string io_buff;
+    io_buff.resize(tx_size * 2 + 1);
     io_buff[tx_size * 2] = '\r';
-    hex2ascii(data.data(), tx_size, io_buff);
-    std::string req(io_buff, sizeof(io_buff));
-    serial_transaction(req);
+    hex2ascii(data.data(), tx_size, io_buff.data());
+    serial_transaction(io_buff);
 }
 
 int QControllerEls27::set_ecu_address(unsigned int ecu_address) {

@@ -5,7 +5,6 @@
 #include <QThread>
 #include <memory>
 #include <thread>
-#include <unistd.h>
 #include "controllers/CanController.h"
 
 namespace Ui {
