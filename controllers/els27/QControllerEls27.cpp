@@ -122,7 +122,6 @@ void SerialHandler::run()
         if(serial_transaction(serial, currentRequest, currentWaitTimeout).first) {
             std::cerr << "serial_transaction error" << std::endl;
         }
-        usedBytes.release();
 #ifdef _NO
         const QByteArray requestData = currentRequest.toUtf8();
         serial.write(requestData);
@@ -147,6 +146,7 @@ void SerialHandler::run()
         }
 #endif
         m_mutex.lock();
+        usedBytes.release();
         m_cond.wait(&m_mutex);
         if (currentPortName != m_portName) {
             currentPortName = m_portName;
