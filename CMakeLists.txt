@@ -11,6 +11,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+add_compile_options(-Werror=vla)
 include_directories(${CMAKE_BINARY_DIR})
 add_executable(${CMAKE_PROJECT_NAME} main.cpp formcar.cpp dialog.cpp controllers/els27/QControllerEls27.cpp)
 target_link_libraries(${CMAKE_PROJECT_NAME} Qt5::Widgets)

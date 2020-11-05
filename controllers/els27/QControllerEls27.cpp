@@ -29,16 +29,16 @@ const uint32_t SerialHandler::baud_arr[] = {
 
 const int SerialHandler::baud_arr_sz = sizeof(baud_arr) / sizeof(baud_arr[0]);
 
-#define PRINT_HEX
-static void print_buffer(int rdlen, const unsigned char *const buf, int isWrite) {
+static inline void print_buffer(int rdlen, const unsigned char *const buf, int isWrite) {
 
-    unsigned char _str[rdlen+1];
+#ifdef DEBUG
+    std::vector<uint8_t> _str(rdlen+1);
     _str[rdlen] = 0;
 
     printf("%s %d:", isWrite? "W" : "R", rdlen);
     /* first display as hex numbers then ASCII */
     for (int i =0; i < rdlen; i++) {
-#ifdef PRINT_HEX
+#ifdef DEBUG_PRINT_HEX
         printf(" 0x%x", buf[i]);
 #endif
         if (buf[i] < ' ')
@@ -46,7 +46,8 @@ static void print_buffer(int rdlen, const unsigned char *const buf, int isWrite)
         else
             _str[i] = buf[i];
     }
-    printf("\n    \"%s\"\n\n", _str);
+    printf("\n    \"%s\"\n\n", _str.data());
+#endif
 }
 
 SerialHandler::SerialHandler(sControllerSettings init_settings, QObject *parent) :
@@ -227,11 +228,10 @@ int SerialHandler::_init(QSerialPort& serial) {
             throw std::runtime_error("failed to connect adapter");
         }
     }
-#ifdef _DIS
-    if(init_settings.maximize) {
-        maximize_baudrate();
+
+    if(m_init_settings.maximize) {
+        maximize_baudrate(serial);
     }
-#endif
 
     std::cerr << "Els baud rate: " << serial.baudRate() << std::endl;
 
@@ -250,7 +250,7 @@ int SerialHandler::_init(QSerialPort& serial) {
 
 int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
 
-    printf("Check baud: %d\n", baud);
+    std::cerr << "Check baud: %d\n" << std::endl;
 
     if(!serial.setBaudRate(baud))
     {
@@ -280,6 +280,96 @@ int SerialHandler::detect_baudrate(QSerialPort& serial) {
             return (int)i;
     }
     return 0;
+}
+
+int SerialHandler::set_baudrate(QSerialPort &serial, uint32_t baud) {
+
+    auto curr_baud = serial.baudRate();
+
+    const unsigned io_buff_max_len = 1024; //alloc 1kb buffer
+    char io_buff[io_buff_max_len];
+
+    int stbr_str_sz = snprintf(io_buff, io_buff_max_len, "STBR %d\r", baud);
+    if(stbr_str_sz < 0) {
+        return -1;
+    }
+
+    /* Host sends STBR */
+    serial.write(io_buff);
+
+
+    serial.waitForReadyRead();
+    unsigned rcv_sz = serial.read(io_buff, io_buff_max_len);
+    if(rcv_sz <= 0) {
+        return -1;
+    }
+
+    if(strstr(io_buff, "OK") == nullptr) {
+        return -1;
+    }
+
+    /* Host: switch to new baud rate */
+    if(!serial.setBaudRate(baud))
+    {
+        return -1;
+    }
+
+    serial.waitForReadyRead();
+    rcv_sz = serial.read(io_buff, io_buff_max_len);
+    if(rcv_sz <= 0) {
+        goto cleanup;
+    }
+
+    /* Host: received a valid STI string? */
+    if(strstr(io_buff, "STN1170 v3.3.1") == nullptr) {
+        goto cleanup;
+    }
+
+    serial.write("\r");
+
+    serial.waitForReadyRead();
+    rcv_sz = serial.read(io_buff, io_buff_max_len);
+    if(rcv_sz <= 0) {
+        goto cleanup;
+    }
+
+    if(strstr(io_buff, "OK") == nullptr) {
+        goto cleanup;
+    }
+
+    return 0;
+
+cleanup:
+
+    serial.setBaudRate(curr_baud);
+
+    return -1;
+}
+
+int SerialHandler::maximize_baudrate(QSerialPort &serial) {
+
+    /* set baudrate timeout in ms */
+    if(serial_transaction(serial, "STBRT 1000\r").first) {
+        return -1;
+    }
+
+    //TODO: find pos in sorted arr
+    auto baud = serial.baudRate();
+    int i=0;
+    while (baud != baud_arr[i]) {
+        if(++i > baud_arr_sz) {
+            return 0; //already maximized
+        }
+    }
+
+    for(int j = i + 1; j < baud_arr_sz; ++j) {
+        if(set_baudrate(serial, baud_arr[j])) { //if ok, goes next
+            continue;
+        }
+        baud = baud_arr[j];
+    }
+
+    return baud;
 }
 
 QControllerEls27::QControllerEls27(sControllerSettings init_settings)
@@ -313,97 +403,4 @@ int QControllerEls27::set_protocol(CanController::CAN_PROTO protocol) {
         control_msg("STP53");   //ISO 15765, 11-bit Tx, 125kbps, DLC=8
 
     return 0;
-}
-
-int QControllerEls27::set_baudrate(uint32_t baud) {
-
-#ifdef _DIS
-    auto curr_baud = baudRate();
-
-    const unsigned io_buff_max_len = 1024; //alloc 1kb buffer
-    char io_buff[io_buff_max_len];
-
-    int stbr_str_sz = snprintf(io_buff, io_buff_max_len, "STBR %d\r", baud);
-    if(stbr_str_sz < 0) {
-        return -1;
-    }
-
-    /* Host sends STBR */
-    write(io_buff);
-
-
-    waitForReadyRead();
-    unsigned rcv_sz = read(io_buff, io_buff_max_len);
-    if(rcv_sz <= 0) {
-        return -1;
-    }
-
-    if(strstr(io_buff, "OK") == nullptr) {
-        return -1;
-    }
-
-    /* Host: switch to new baud rate */
-    if(!setBaudRate(baud))
-    {
-        return -1;
-    }
-
-    waitForReadyRead();
-    rcv_sz = read(io_buff, io_buff_max_len);
-    if(rcv_sz <= 0) {
-        goto cleanup;
-    }
-
-    /* Host: received a valid STI string? */
-    if(strstr(io_buff, "STN1170 v3.3.1") == nullptr) {
-        goto cleanup;
-    }
-
-    write("\r");
-
-    waitForReadyRead();
-    rcv_sz = read(io_buff, io_buff_max_len);
-    if(rcv_sz <= 0) {
-        goto cleanup;
-    }
-
-    if(strstr(io_buff, "OK") == nullptr) {
-        goto cleanup;
-    }
-
-    return 0;
-
-cleanup:
-
-    setBaudRate(curr_baud);
-#endif
-    return -1;
-}
-
-int QControllerEls27::maximize_baudrate() {
-
-#ifdef _DIS
-    /* set baudrate timeout in ms */
-    if(serial_transaction("STBRT 1000\r").first) {
-        return -1;
-    }
-
-    //TODO: find pos in sorted arr
-    auto baud = baudRate();
-    int i=0;
-    while (baud != baud_arr[i]) {
-        if(++i > baud_arr_sz) {
-            return 0; //already maximized
-        }
-    }
-
-    for(int j = i + 1; j < baud_arr_sz; ++j) {
-        if(set_baudrate(baud_arr[j])) { //if ok, goes next
-            continue;
-        }
-        baud = baud_arr[j];
-    }
-
-    return baud;
-#endif
 }

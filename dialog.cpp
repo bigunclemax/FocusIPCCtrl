@@ -28,7 +28,9 @@ Dialog::Dialog(QWidget *parent)
 
     ui->setupUi(this);
 
-    connect(ui->comboBox_adapterType, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+    connect(ui->comboBox_adapterType, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [serialEnumerator, this](int index)
+    {
         m_selectedType = static_cast<enControllerType>(index);
         if(m_selectedType == els27) {
 
@@ -41,7 +43,7 @@ Dialog::Dialog(QWidget *parent)
         }
     });
 
-    connect(ui->pushButton_OK, &QPushButton::clicked, this, [=]() {
+    connect(ui->pushButton_OK, &QPushButton::clicked, this, [this]() {
         this->close();
         if(m_selectedType == els27) {
             m_settings.port_name = ui->comboBox_comPorts->currentText().toStdString();
@@ -52,7 +54,7 @@ Dialog::Dialog(QWidget *parent)
         emit btnOk_click();
     });
 
-    connect(ui->checkBox_autodetect, &QCheckBox::toggled, this, [=](bool checked) {
+    connect(ui->checkBox_autodetect, &QCheckBox::toggled, this, [this](bool checked) {
         ui->spinBox_baudrate->setEnabled(!checked);
     });
 

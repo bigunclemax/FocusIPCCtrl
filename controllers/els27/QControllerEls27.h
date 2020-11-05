@@ -33,6 +33,8 @@ private:
     int _init(QSerialPort& serial);
     int test_baudrate(QSerialPort& serial, uint32_t baud);
     int detect_baudrate(QSerialPort& serial);
+    int set_baudrate(QSerialPort &serial, uint32_t baud);
+    int maximize_baudrate(QSerialPort &serial);
     std::pair<int, std::string> serial_transaction(QSerialPort &serial, const std::string &req, int timeout = 1000);
 
     static const uint32_t   baud_arr[];
@@ -61,12 +63,8 @@ public:
     int set_protocol(CAN_PROTO protocol) override;
 
     int RAW_transaction(std::vector<uint8_t> &data) override;
-    int maximize_baudrate();
-
 
 private:
-    int set_baudrate(uint32_t baud);
-
     int control_msg(const std::string &req);
     inline static void hex2ascii(const uint8_t* bin, unsigned int binsz, char* result)
     {
