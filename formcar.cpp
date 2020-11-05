@@ -91,7 +91,7 @@ void FormCar::setupSimulator() {
             [this](bool toggled){ g_turn_l = toggled; });
 
     /* Turn right */
-    connect(ui->pushButton_LeftTurn, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_RightTurn, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool toggled){ g_turn_r = toggled; });
 
 }

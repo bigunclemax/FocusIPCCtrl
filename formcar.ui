@@ -40,7 +40,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_TurnRight">
+      <widget class="QPushButton" name="pushButton_RightTurn">
        <property name="text">
         <string>Turn right</string>
        </property>

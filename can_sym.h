@@ -66,9 +66,10 @@ void fakeTurn(CanController *controller, bool left, bool right) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
     if(controller->set_ecu_address(0x03A)) return;
-    std::vector<uint8_t>  data1 = { static_cast<unsigned char>(0x82u | left),
-                                    static_cast<unsigned char>(0x83u | (right? 0xCu : 0)),
-                                    0x00, 0x02, 0x80, 0x00, 0x00, 0x00};
+    std::vector<uint8_t>  data = { 0x82,
+                                   static_cast<unsigned char>(0x83u | (right << 3u) | (left << 2u)),
+                                   0x00, 0x02, 0x80, 0x00, 0x00, 0x00};
+    controller->RAW_transaction(data);
 }
 
 void resetDash(CanController *controller) {
