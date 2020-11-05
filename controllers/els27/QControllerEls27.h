@@ -31,11 +31,14 @@ public:
 private:
     void run() override;
     int _init(QSerialPort& serial);
-    int test_baudrate(QSerialPort& serial, uint32_t baud);
+    int check_baudrate(QSerialPort& serial, uint32_t baud);
     int detect_baudrate(QSerialPort& serial);
     int set_baudrate(QSerialPort &serial, uint32_t baud);
     int maximize_baudrate(QSerialPort &serial);
     std::pair<int, std::string> serial_transaction(QSerialPort &serial, const std::string &req, int timeout = 1000);
+
+    static constexpr int check_baudrate_timeout = 3000; ///< max els response timeout in ms
+    static constexpr int set_baudrate_timeout = 1000;   ///< baud rate switch timeout in ms
 
     static const uint32_t   baud_arr[];
     static const int        baud_arr_sz;

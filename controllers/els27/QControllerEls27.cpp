@@ -9,6 +9,7 @@
 #include "QControllerEls27.h"
 
 const uint32_t SerialHandler::baud_arr[] = {
+        9600,
         19200,
         38400,
         57600,
@@ -254,7 +255,7 @@ int SerialHandler::_init(QSerialPort& serial) {
     return 0;
 }
 
-int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
+int SerialHandler::check_baudrate(QSerialPort& serial, uint32_t baud) {
 
     std::cerr << "Check baud: " << baud << std::endl;
 
@@ -264,11 +265,11 @@ int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
     }
 
     /* clear */
-    if(serial_transaction(serial,"?\r", 500).first) {
+    if(serial_transaction(serial,"?\r", check_baudrate_timeout).first) {
         return -1;
     }
 
-    auto r = serial_transaction(serial,"ATWS\r", 500);
+    auto r = serial_transaction(serial,"ATWS\r", check_baudrate_timeout);
     if(r.first) {
         return -1;
     }
@@ -284,7 +285,7 @@ int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
 
 int SerialHandler::detect_baudrate(QSerialPort& serial) {
     for(unsigned int i : baud_arr) {
-        if(!test_baudrate(serial, i))
+        if(!check_baudrate(serial, i))
             return (int)i;
     }
     return 0;
@@ -306,9 +307,12 @@ int SerialHandler::set_baudrate(QSerialPort &serial, uint32_t baud) {
     serial.write(io_buff);
 
 
-    serial.waitForReadyRead();
-    unsigned rcv_sz = serial.read(io_buff, io_buff_max_len);
-    if(rcv_sz <= 0) {
+    unsigned rcv_sz;
+    if(serial.waitForReadyRead()) {
+        rcv_sz = serial.read(io_buff, io_buff_max_len);
+        while (serial.waitForReadyRead(50))
+            rcv_sz += serial.read(io_buff+rcv_sz, io_buff_max_len-rcv_sz);
+    } else {
         return -1;
     }
 
@@ -322,9 +326,11 @@ int SerialHandler::set_baudrate(QSerialPort &serial, uint32_t baud) {
         return -1;
     }
 
-    serial.waitForReadyRead();
-    rcv_sz = serial.read(io_buff, io_buff_max_len);
-    if(rcv_sz <= 0) {
+    if(serial.waitForReadyRead()) {
+        rcv_sz = serial.read(io_buff, io_buff_max_len);
+        while (serial.waitForReadyRead(100))
+            rcv_sz += serial.read(io_buff+rcv_sz, io_buff_max_len-rcv_sz);
+    } else {
         goto cleanup;
     }
 
@@ -335,9 +341,11 @@ int SerialHandler::set_baudrate(QSerialPort &serial, uint32_t baud) {
 
     serial.write("\r");
 
-    serial.waitForReadyRead();
-    rcv_sz = serial.read(io_buff, io_buff_max_len);
-    if(rcv_sz <= 0) {
+    if(serial.waitForReadyRead()) {
+        rcv_sz = serial.read(io_buff, io_buff_max_len);
+        while (serial.waitForReadyRead(100))
+            rcv_sz += serial.read(io_buff+rcv_sz, io_buff_max_len-rcv_sz);
+    } else {
         goto cleanup;
     }
 
@@ -348,8 +356,10 @@ int SerialHandler::set_baudrate(QSerialPort &serial, uint32_t baud) {
     return 0;
 
 cleanup:
+    std::this_thread::sleep_for(std::chrono::milliseconds(set_baudrate_timeout));
 
-    serial.setBaudRate(curr_baud);
+    if(serial.setBaudRate(curr_baud))
+        serial_transaction(serial, "?\r");
 
     return -1;
 }
@@ -357,7 +367,8 @@ cleanup:
 int SerialHandler::maximize_baudrate(QSerialPort &serial) {
 
     /* set baudrate timeout in ms */
-    if(serial_transaction(serial, "STBRT 1000\r").first) {
+    std::string str = "STBRT " + std::to_string(set_baudrate_timeout) + "\r";
+    if(serial_transaction(serial, str).first) {
         return -1;
     }
 
