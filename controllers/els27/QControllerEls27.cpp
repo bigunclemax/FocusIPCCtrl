@@ -35,18 +35,18 @@ static inline void print_buffer(int rdlen, const unsigned char *const buf, int i
     std::vector<uint8_t> _str(rdlen+1);
     _str[rdlen] = 0;
 
-    printf("%s %d:", isWrite? "W" : "R", rdlen);
+    fprintf(stderr,"%s %d:", isWrite? "W" : "R", rdlen);
     /* first display as hex numbers then ASCII */
     for (int i =0; i < rdlen; i++) {
 #ifdef DEBUG_PRINT_HEX
-        printf(" 0x%x", buf[i]);
+        fprintf(stderr," 0x%x", buf[i]);
 #endif
         if (buf[i] < ' ')
             _str[i] = '.';   /* replace any control chars */
         else
             _str[i] = buf[i];
     }
-    printf("\n    \"%s\"\n\n", _str.data());
+    fprintf(stderr,"\n    \"%s\"\n\n", _str.data());
 #endif
 }
 
@@ -220,37 +220,43 @@ int SerialHandler::_init(QSerialPort& serial) {
 
 
     if(m_init_settings.baud) {
-        if(test_baudrate(serial, m_init_settings.baud)) {
+        std::cerr << "Use users baud rate: " << m_init_settings.baud << std::endl;
+        if(check_baudrate(serial, m_init_settings.baud)) {
             throw std::runtime_error("failed to connect adapter");
         }
     } else {
+        std::cerr << "Use auto detected baud rate" << std::endl;
         if(!detect_baudrate(serial)) {
             throw std::runtime_error("failed to connect adapter");
         }
     }
 
     if(m_init_settings.maximize) {
+        std::cerr << "Try maximize baud rate" << std::endl;
         maximize_baudrate(serial);
     }
 
     std::cerr << "Els baud rate: " << serial.baudRate() << std::endl;
 
     serial_transaction(serial, "\r");
-    serial_transaction(serial, "ATE1\r"); //echo off
-    serial_transaction(serial, "ATL0\r"); //linefeeds off
-    serial_transaction(serial, "ATS0\r"); //spaces off
-    serial_transaction(serial, "STPO\r");  //ATBI Open current protocol.
-    serial_transaction(serial, "ATAL\r");  //allow long messages
-    serial_transaction(serial, "ATAT0\r"); //disable adaptive timing
-    serial_transaction(serial, "ATCAF0\r");//CAN auto formatting off
-    serial_transaction(serial, "ATST01\r");  //Set timeout to hh(13) x 4 ms
-    serial_transaction(serial, "ATR0\r");    //Responses on
+    serial_transaction(serial, "ATE1\r");   //echo off
+    serial_transaction(serial, "ATL0\r");   //linefeeds off
+    serial_transaction(serial, "ATS0\r");   //spaces off
+    serial_transaction(serial, "STPO\r");   //ATBI Open current protocol.
+    serial_transaction(serial, "ATAL\r");   //allow long messages
+    serial_transaction(serial, "ATAT0\r");  //disable adaptive timing
+    serial_transaction(serial, "ATCAF0\r"); //CAN auto formatting off
+    serial_transaction(serial, "ATST01\r"); //Set timeout to hh(13) x 4 ms
+    serial_transaction(serial, "ATR0\r");   //Responses on
+
+    serial_transaction(serial, "STI\r");    //Get els description
+
     return 0;
 }
 
 int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
 
-    std::cerr << "Check baud: %d\n" << std::endl;
+    std::cerr << "Check baud: " << baud << std::endl;
 
     if(!serial.setBaudRate(baud))
     {
@@ -270,6 +276,8 @@ int SerialHandler::test_baudrate(QSerialPort& serial, uint32_t baud) {
     if (r.second.find("ELM327 v1.3a") == std::string::npos) {
         return -1;
     }
+
+    std::cerr << "Baud " << baud << " supported" << std::endl;
 
     return 0;
 }
@@ -364,8 +372,10 @@ int SerialHandler::maximize_baudrate(QSerialPort &serial) {
 
     for(int j = i + 1; j < baud_arr_sz; ++j) {
         if(set_baudrate(serial, baud_arr[j])) { //if ok, goes next
+            std::cerr << "Baud rate " << baud_arr[j] << " not supported" << std::endl;
             continue;
         }
+        std::cerr << "Baud rate " << baud_arr[j] << " supported" << std::endl;
         baud = baud_arr[j];
     }
 
