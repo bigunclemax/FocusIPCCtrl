@@ -29,10 +29,7 @@ void FormCar::setupSimulator() {
     t_ignition_doors = new  IPCthread(250000);
     connect(t_ignition_doors, &IPCthread::finished, t_ignition_doors, &QObject::deleteLater);
     t_ignition_doors->registerCallback([&] {
-        if (g_drv_door || g_psg_door || g_rdrv_door || g_rpsg_door)
             fakeIgnitionDoors(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot);
-        else
-            fakeIgnitionDoors(static_cast<CanController*>(controller.get()), false, false, false, false, false, false);
     });
 
     /* speed & rpm */
