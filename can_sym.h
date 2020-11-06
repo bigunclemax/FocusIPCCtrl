@@ -42,12 +42,15 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
     controller->RAW_transaction(data);
 }
 
-void fakeIgnition(CanController *controller) {
+void fakeIgnitionDoors(CanController *controller, uint8_t g_drv_door, uint8_t g_psg_door, uint8_t g_rdrv_door, uint8_t g_rpsg_door, uint8_t g_hood,
+                       uint8_t g_boot) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
     if(controller->set_ecu_address(0x080)) return;
+    uint8_t door = 0x3F; // (All doors closed)
 
-    std::vector<uint8_t> data = { 0x74, 0x63, 0xC7, 0x80, 0x10, 0x7A };
+
+    std::vector<uint8_t> data = { 0x77, 0x03, 0x07, door, 0xD9, 0x07, 0x03, 0x82 };
     controller->RAW_transaction(data);
 }
 

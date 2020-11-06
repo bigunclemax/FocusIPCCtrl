@@ -48,7 +48,7 @@ private:
 	void setupSimulator();
 
     std::unique_ptr<CanController> controller;
-    IPCthread       *t_ignition{};
+    IPCthread       *t_ignition_doors{};
     IPCthread       *t_speed_rpm{};
     IPCthread       *t_eng_temp{};
     IPCthread       *t_fuel_temp{};
@@ -60,6 +60,12 @@ private:
     bool g_turn_l       = false;
     bool g_turn_r       = false;
     bool g_turn_flag    = false;
+    bool g_drv_door     = false;
+    bool g_psg_door     = false;
+    bool g_rdrv_door    = false;
+    bool g_rpsg_door    = false;
+    bool g_hood         = false;
+    bool g_boot         = false;
 
 };
 
