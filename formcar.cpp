@@ -61,6 +61,13 @@ void FormCar::setupSimulator() {
         g_turn_flag = !g_turn_flag;
     });
 
+    /* ACC Distance */
+    t_acc = std::make_unique<IPCthread>(250000);
+    t_acc->registerCallback([&] {
+        accDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_status);
+    });
+
+
     /* Ignition on/off */
     connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool i){ i ? start() : stop(); });
@@ -90,28 +97,36 @@ void FormCar::setupSimulator() {
             [this](bool toggled){ g_turn_r = toggled; });
 
     /* Driver Door */
-    connect(ui->lfDoorButton, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_lfDoorButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_drv_door = toggled; });
 
     /* Passenger Door */
-    connect(ui->rfDoorButton, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_rfDoorButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_psg_door = toggled; });
 
     /* Rear Driver Door */
-    connect(ui->lrDoorButton, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_lrDoorButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_rdrv_door = toggled; });
 
     /* Rear Passenger Door */
-    connect(ui->rrDoorButton, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_rrDoorButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_rpsg_door = toggled; });
     
     /* Hood */
-    connect(ui->hoodButton, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_hoodButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_hood = toggled; });
 
     /* Boot */
-    connect(ui->bootButton, QOverload<bool>::of(&QPushButton::toggled),
+    connect(ui->pushButton_bootButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_boot = toggled; });
+
+    /* ACC Status */
+    connect(ui->pushButton_accStatus, QOverload<bool>::of(&QPushButton::toggled),
+        [this](bool toggled) { g_acc_status = toggled; });
+
+    /* ACC Distance */
+    connect(ui->spinBox_accDistance, QOverload<int>::of(&QSpinBox::valueChanged),
+        [this](int i) { g_acc_distance = i; });
 }
 
 void FormCar::start() {
@@ -124,6 +139,7 @@ void FormCar::start() {
     t_fuel_temp->start();
     t_eng_temp->start();
     t_turn->start();
+    t_acc->start();
 }
 
 void FormCar::stop() {
@@ -133,10 +149,12 @@ void FormCar::stop() {
     t_fuel_temp->requestInterruption();
     t_eng_temp->requestInterruption();
     t_turn->requestInterruption();
+    t_acc->requestInterruption();
 
     t_ignition_doors->wait();
     t_speed_rpm->wait();
     t_fuel_temp->wait();
     t_eng_temp->wait();
     t_turn->wait();
+    t_acc->wait();
 }

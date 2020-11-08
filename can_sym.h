@@ -72,6 +72,17 @@ void fakeTurn(CanController *controller, bool left, bool right) {
     controller->RAW_transaction(data);
 }
 
+void accDistance(CanController* controller, uint8_t accDistance, bool accStatus) {
+
+    const std::lock_guard<std::mutex> lock(m_mutex);
+    if (accStatus) {
+        accDistance = accDistance * 0x10;
+        if (controller->set_ecu_address(0x070)) return;
+        std::vector<uint8_t>  data = { 0x00, 0x9C, accDistance, 0x80, 0x11, 0xF4, 0xE8, 0x54 };
+        controller->RAW_transaction(data);
+    }
+}
+
 void resetDash(CanController *controller) {
     const std::lock_guard<std::mutex> lock(m_mutex);
     static bool t = false;

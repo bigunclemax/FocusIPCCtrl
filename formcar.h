@@ -56,10 +56,12 @@ private:
     std::unique_ptr<IPCthread>     t_eng_temp;
     std::unique_ptr<IPCthread>     t_fuel_temp;
     std::unique_ptr<IPCthread>     t_turn;
-    int  g_rpm          =0;
-    int  g_speed        =0;
-    int  g_eng_temp     =0;
-    int  g_fuel         =0;
+    std::unique_ptr<IPCthread>     t_acc;
+    int  g_rpm          = 0;
+    int  g_speed        = 0;
+    int  g_eng_temp     = 0;
+    int  g_fuel         = 0;
+    int  g_acc_distance = 0;
     bool g_turn_l       = false;
     bool g_turn_r       = false;
     bool g_turn_flag    = false;
@@ -69,6 +71,7 @@ private:
     bool g_rpsg_door    = false;
     bool g_hood         = false;
     bool g_boot         = false;
+    bool g_acc_status   = false;
 
 };
 
