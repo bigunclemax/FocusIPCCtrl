@@ -14,8 +14,8 @@ class FormCar;
 class IPCthread : public QThread{
     Q_OBJECT
 public:
-    [[noreturn]] void run() override {
-        while (true) {
+    void run() override {
+        while (!isInterruptionRequested()) {
             laterCB();
             usleep(interval);
         }
@@ -41,6 +41,9 @@ class FormCar : public QWidget
 public:
 	explicit FormCar(std::unique_ptr<CanController> controller, QWidget *parent = nullptr);
 	~FormCar() override;
+    void showEvent( QShowEvent* event ) override;
+	void start();
+    void stop();
 
 private:
 	Ui::FormCar *ui;
@@ -48,11 +51,11 @@ private:
 	void setupSimulator();
 
     std::unique_ptr<CanController> controller;
-    IPCthread       *t_ignition_doors{};
-    IPCthread       *t_speed_rpm{};
-    IPCthread       *t_eng_temp{};
-    IPCthread       *t_fuel_temp{};
-    IPCthread       *t_turn{};
+    std::unique_ptr<IPCthread>     t_ignition_doors;
+    std::unique_ptr<IPCthread>     t_speed_rpm;
+    std::unique_ptr<IPCthread>     t_eng_temp;
+    std::unique_ptr<IPCthread>     t_fuel_temp;
+    std::unique_ptr<IPCthread>     t_turn;
     int  g_rpm          =0;
     int  g_speed        =0;
     int  g_eng_temp     =0;

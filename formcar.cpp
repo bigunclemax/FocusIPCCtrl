@@ -8,54 +8,50 @@ FormCar::FormCar(std::unique_ptr<CanController> controller, QWidget *parent):
         controller(std::move(controller))
 {
     ui->setupUi(this);
-    this->show();
     setupSimulator();
 }
 
 FormCar::~FormCar()
 {
+    stop();
 	delete ui;
+}
+
+void FormCar::showEvent( QShowEvent* event ) {
+    QWidget::showEvent( event );
+    start();
 }
 
 void FormCar::setupSimulator() {
 
     controller->set_protocol(CanController::CAN_MS);
 
-    /* reset dash */
-    resetDash(static_cast<CanController*>(static_cast<CanController*>(controller.get())));
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-    /* ignition and doors*/
-    t_ignition_doors = new  IPCthread(250000);
-    connect(t_ignition_doors, &IPCthread::finished, t_ignition_doors, &QObject::deleteLater);
+    /* ignition and doors */
+    t_ignition_doors = std::make_unique<IPCthread>(250000);
     t_ignition_doors->registerCallback([&] {
             fakeIgnitionDoors(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot);
     });
 
     /* speed & rpm */
-    t_speed_rpm = new  IPCthread(250000);
-    connect(t_speed_rpm, &IPCthread::finished, t_speed_rpm, &QObject::deleteLater);
+    t_speed_rpm = std::make_unique<IPCthread>(250000);
     t_speed_rpm->registerCallback([&]{
         fakeEngineRpmAndSpeed(static_cast<CanController*>(controller.get()), g_rpm, g_speed);
     });
 
     /* fuel */
-    t_fuel_temp = new  IPCthread(250000);
-    connect(t_fuel_temp, &IPCthread::finished, t_fuel_temp, &QObject::deleteLater);
+    t_fuel_temp = std::make_unique<IPCthread>(250000);
     t_fuel_temp->registerCallback([&]{
         fakeFuel(static_cast<CanController*>(controller.get()), g_fuel);
     });
 
     /* eng temp */
-    t_eng_temp = new  IPCthread(250000);
-    connect(t_eng_temp, &IPCthread::finished, t_eng_temp, &QObject::deleteLater);
+    t_eng_temp = std::make_unique<IPCthread>(250000);
     t_eng_temp->registerCallback([&]{
         fakeEngineTemp(static_cast<CanController*>(controller.get()), g_eng_temp);
     });
 
     /* turns */
-    t_turn = new  IPCthread(250000);
-    connect(t_turn, &IPCthread::finished, t_turn, &QObject::deleteLater);
+    t_turn = std::make_unique<IPCthread>(250000);
     t_turn->registerCallback([&]{
         if(g_turn_flag)
             fakeTurn(static_cast<CanController*>(controller.get()), g_turn_l, g_turn_r);
@@ -65,13 +61,9 @@ void FormCar::setupSimulator() {
         g_turn_flag = !g_turn_flag;
     });
 
-
     /* Ignition on/off */
-    t_ignition_doors->start();
-    t_speed_rpm->start();
-    t_fuel_temp->start();
-    t_eng_temp->start();
-    t_turn->start();
+    connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool i){ i ? start() : stop(); });
 
     /* Speed */
     connect(ui->spinBox_Speed, QOverload<int>::of(&QSpinBox::valueChanged),
@@ -120,5 +112,31 @@ void FormCar::setupSimulator() {
     /* Boot */
     connect(ui->bootButton, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_boot = toggled; });
+}
 
+void FormCar::start() {
+    /* reset dash */
+    resetDash(static_cast<CanController*>(static_cast<CanController*>(controller.get())));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    /* start threads */
+    t_ignition_doors->start();
+    t_speed_rpm->start();
+    t_fuel_temp->start();
+    t_eng_temp->start();
+    t_turn->start();
+}
+
+void FormCar::stop() {
+    /* start threads */
+    t_ignition_doors->requestInterruption();
+    t_speed_rpm->requestInterruption();
+    t_fuel_temp->requestInterruption();
+    t_eng_temp->requestInterruption();
+    t_turn->requestInterruption();
+
+    t_ignition_doors->wait();
+    t_speed_rpm->wait();
+    t_fuel_temp->wait();
+    t_eng_temp->wait();
+    t_turn->wait();
 }

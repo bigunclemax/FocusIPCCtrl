@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
 
 
         form = std::make_unique<FormCar>(std::move(controller));
+        form->show();
     });
 
     init_dialog->show();
