@@ -46,7 +46,7 @@ void fakeIgnitionDoors(CanController *controller, uint8_t g_drv_door, uint8_t g_
 
     const std::lock_guard<std::mutex> lock(m_mutex);
     if(controller->set_ecu_address(0x080)) return;
-    uint8_t door = (!g_drv_door) | (!g_psg_door << 1u) | (!g_rdrv_door << 2u) | (!g_rpsg_door << 3u) | (!g_hood << 4u) | (!g_boot << 5u);
+    uint8_t door = (!g_drv_door) | (!g_psg_door << 1u) | (!g_rdrv_door << 2u) | (!g_rpsg_door << 3u) | (!g_boot << 4u) | (!g_hood << 5u);
     std::vector<uint8_t> data = { 0x77, 0x03, 0x07, door, 0xD9, 0x07, 0x03, 0x82 };
     controller->RAW_transaction(data);
 }
