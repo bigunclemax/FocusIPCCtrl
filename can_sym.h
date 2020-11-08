@@ -16,8 +16,7 @@ void fakeFuel(CanController *controller, uint16_t fuel) {
     const std::lock_guard<std::mutex> lock(m_mutex);
     if(controller->set_ecu_address(0x320)) return;
 
-    //TODO: doesn't working correctly
-    fuel = 0xfff - (fuel * 0x2ff / 100); //percents from 0 to 100
+    fuel = 0xf00 - (0x2a + fuel*235/50);
 
     std::vector<uint8_t> data = {0x00, 0x00,
                                  (uint8_t)(0x10u | ((fuel >> 8u) & 0xFu)),
