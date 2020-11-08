@@ -35,7 +35,7 @@ void FormCar::setupSimulator() {
     /* speed & rpm */
     t_speed_rpm = std::make_unique<IPCthread>(250000);
     t_speed_rpm->registerCallback([&]{
-        fakeEngineRpmAndSpeed(static_cast<CanController*>(controller.get()), g_rpm, g_speed);
+        fakeEngineRpmAndSpeed(static_cast<CanController*>(controller.get()), g_rpm, g_speed, g_speed_warning);
     });
 
     /* fuel */
@@ -67,7 +67,6 @@ void FormCar::setupSimulator() {
         accDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_status);
     });
 
-
     /* Ignition on/off */
     connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool i){ i ? start() : stop(); });
@@ -79,6 +78,10 @@ void FormCar::setupSimulator() {
     /* RPM */
     connect(ui->spinBox_RPM, QOverload<int>::of(&QSpinBox::valueChanged),
             [this](int i){ g_rpm = i; });
+
+    /* Speed Warning */
+    connect(ui->pushButton_speedWarning, QOverload<bool>::of(&QPushButton::toggled),
+        [this](bool toggled) { g_speed_warning = toggled; });
 
     /* Engine temp */
     connect(ui->spinBox_Temp, QOverload<int>::of(&QSpinBox::valueChanged),
@@ -125,7 +128,7 @@ void FormCar::setupSimulator() {
         [this](bool toggled) { g_acc_status = toggled; });
 
     /* ACC Distance */
-    connect(ui->spinBox_accDistance, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(ui->spinBox_accMaxDistance, QOverload<int>::of(&QSpinBox::valueChanged),
         [this](int i) { g_acc_distance = i; });
 }
 

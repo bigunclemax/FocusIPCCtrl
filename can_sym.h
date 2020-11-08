@@ -25,15 +25,15 @@ void fakeFuel(CanController *controller, uint16_t fuel) {
     controller->RAW_transaction(data);
 }
 
-void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed) {
+void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed, bool speed_warning) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
     if(controller->set_ecu_address(0x110)) return;
-
+    uint8_t warning = (speed_warning) ? 0xdd : 0xc0;
     rpm /= 2;
     speed = speed * 10000 / 105; //km\h
 
-    std::vector<uint8_t> data = { 0xc0, 0x03, 0x0a, 0x01,
+    std::vector<uint8_t> data = { warning, 0x03, 0x0a, 0x01,
                                   (uint8_t)((rpm >> 8u)),
                                   (uint8_t)(rpm & 0xFFu),
                                   (uint8_t)((speed >> 8u)),

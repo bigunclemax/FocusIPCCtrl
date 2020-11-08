@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>667</width>
-    <height>319</height>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,99 +26,175 @@
    <property name="bottomMargin">
     <number>9</number>
    </property>
-   <item row="2" column="1" rowspan="2">
-    <layout class="QVBoxLayout" name="accBox">
+   <item row="3" column="0">
+    <layout class="QHBoxLayout" name="fuelEngineTempBox">
      <item>
-      <layout class="QHBoxLayout" name="accOnStandbyLayout">
+      <layout class="QVBoxLayout" name="fuelLayout">
        <item>
-        <widget class="QPushButton" name="pushButton_accStatus">
-         <property name="text">
-          <string>Adaptive Cruise Control</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="sub_fuelLayout">
+         <item>
+          <widget class="QLabel" name="fuelLabel">
+           <property name="text">
+            <string>Fuel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_Fuel">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_accStandby">
-         <property name="enabled">
-          <bool>true</bool>
+        <widget class="QSlider" name="horizontalSlider_Fuel">
+         <property name="maximum">
+          <number>100</number>
          </property>
-         <property name="text">
-          <string>Standby</string>
+         <property name="singleStep">
+          <number>1</number>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="accDistanceLayout">
+      <layout class="QVBoxLayout" name="engineTempLayout">
        <item>
-        <widget class="QLabel" name="accDistanceText">
-         <property name="text">
-          <string>Set Distance</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="sub_engineTempLayout">
+         <item>
+          <widget class="QLabel" name="engineTempLabel">
+           <property name="text">
+            <string>Engine Temp</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_Temp">
+           <property name="minimum">
+            <number>-60</number>
+           </property>
+           <property name="maximum">
+            <number>195</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_accDistance">
-         <property name="enabled">
-          <bool>true</bool>
+        <widget class="QSlider" name="horizontalSlider_EngTemp">
+         <property name="minimum">
+          <number>-60</number>
          </property>
          <property name="maximum">
-          <number>8</number>
+          <number>195</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="speedRPMBox">
+     <item>
+      <layout class="QVBoxLayout" name="speedLayout">
+       <item>
+        <layout class="QHBoxLayout" name="sub_speedLayout">
+         <item>
+          <widget class="QLabel" name="speedLabel">
+           <property name="text">
+            <string>Speed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_Speed">
+           <property name="maximum">
+            <number>315</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_Speed">
+         <property name="maximum">
+          <number>315</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="QSlider" name="horizontalSlider_AccDistance">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>3</verstretch>
-        </sizepolicy>
+      <layout class="QVBoxLayout" name="engineRPMLayout">
+       <item>
+        <layout class="QHBoxLayout" name="sub_engineRPMLayout">
+         <item>
+          <widget class="QLabel" name="engineRPMLabel">
+           <property name="text">
+            <string>Engine RPM</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_RPM">
+           <property name="maximum">
+            <number>8000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_RPM">
+         <property name="maximum">
+          <number>8000</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="title">
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Ford Focus MK3 IPC Simulator</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="ignitionBox">
+     <item>
+      <widget class="QPushButton" name="pushButton_Ignition">
+       <property name="text">
+        <string>Ignition</string>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="accessibleDescription">
-        <string/>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="sliderPosition">
-        <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickInterval">
-        <number>0</number>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -249,151 +325,6 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="speedRPMBox">
-     <item>
-      <layout class="QVBoxLayout" name="speedLayout">
-       <item>
-        <layout class="QHBoxLayout" name="sub_speedLayout">
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Speed</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_Speed">
-           <property name="maximum">
-            <number>315</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_Speed">
-         <property name="maximum">
-          <number>315</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="engineRPMLayout">
-       <item>
-        <layout class="QHBoxLayout" name="sub_engineRPMLayout">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Engine RPM</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_RPM">
-           <property name="maximum">
-            <number>8000</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_RPM">
-         <property name="maximum">
-          <number>8000</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="fuelEngineTempBox">
-     <item>
-      <layout class="QVBoxLayout" name="fuelLayout">
-       <item>
-        <layout class="QHBoxLayout" name="sub_fuelLayout">
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Fuel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_Fuel">
-           <property name="maximum">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_Fuel">
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="engineTempLayout">
-       <item>
-        <layout class="QHBoxLayout" name="sub_engineTempLayout">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Engine Temp</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_Temp">
-           <property name="minimum">
-            <number>-60</number>
-           </property>
-           <property name="maximum">
-            <number>195</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_EngTemp">
-         <property name="minimum">
-          <number>-60</number>
-         </property>
-         <property name="maximum">
-          <number>195</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
    <item row="1" column="1">
     <widget class="QGroupBox" name="doorsBox">
      <property name="enabled">
@@ -466,33 +397,215 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <layout class="QHBoxLayout" name="ignitionBox">
-     <item>
-      <widget class="QPushButton" name="pushButton_Ignition">
-       <property name="text">
-        <string>Ignition</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="5" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Miscellaneous</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton_speedWarning">
+        <property name="text">
+         <string>Send Speed Warning</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_dpfRegen">
+        <property name="text">
+         <string>Send DPF Require Regen</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_dpfFull">
+        <property name="text">
+         <string>Send DPF Full</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="title">
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-      </font>
+   <item row="2" column="1" rowspan="4">
+    <widget class="QGroupBox" name="accBox">
+     <property name="title">
+      <string>ACC</string>
      </property>
-     <property name="text">
-      <string>Ford Focus MK3 IPC Simulator</string>
-     </property>
+     <layout class="QVBoxLayout" name="accLayout">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="accMaxDistanceVLayout">
+        <item>
+         <layout class="QHBoxLayout" name="accOnStandbyLayout">
+          <item>
+           <widget class="QPushButton" name="pushButton_accStatus">
+            <property name="text">
+             <string>On / Off</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_accStandby">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Standby</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="accMaxDistanceLayout">
+          <item>
+           <widget class="QLabel" name="accMaxDistanceLabel">
+            <property name="text">
+             <string>Set Max Distance</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_accMaxDistance">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="maximum">
+             <number>8</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QSlider" name="horizontalSlider_accMaxDistance">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
+          <property name="accessibleDescription">
+           <string/>
+          </property>
+          <property name="maximum">
+           <number>6</number>
+          </property>
+          <property name="pageStep">
+           <number>10</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="sliderPosition">
+           <number>0</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tickInterval">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="accCurrentDistanceVLayout">
+        <item>
+         <layout class="QHBoxLayout" name="accCurrentDistanceLayout">
+          <item>
+           <widget class="QLabel" name="accCurrentDistanceLabel">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Set Current Distance</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_accCurrentDistance">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="maximum">
+             <number>8</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QSlider" name="horizontalSlider_accCurrentDistance">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximum">
+           <number>8</number>
+          </property>
+          <property name="pageStep">
+           <number>10</number>
+          </property>
+          <property name="sliderPosition">
+           <number>0</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -506,12 +619,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>305</y>
+     <x>87</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
-     <x>217</x>
-     <y>276</y>
+     <x>226</x>
+     <y>312</y>
     </hint>
    </hints>
   </connection>
@@ -522,12 +635,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>276</y>
+     <x>226</x>
+     <y>312</y>
     </hint>
     <hint type="destinationlabel">
-     <x>76</x>
-     <y>305</y>
+     <x>87</x>
+     <y>341</y>
     </hint>
    </hints>
   </connection>
@@ -542,8 +655,8 @@
      <y>216</y>
     </hint>
     <hint type="destinationlabel">
-     <x>76</x>
-     <y>245</y>
+     <x>87</x>
+     <y>281</y>
     </hint>
    </hints>
   </connection>
@@ -554,12 +667,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>453</x>
-     <y>276</y>
+     <x>451</x>
+     <y>312</y>
     </hint>
     <hint type="destinationlabel">
-     <x>420</x>
-     <y>305</y>
+     <x>452</x>
+     <y>341</y>
     </hint>
    </hints>
   </connection>
@@ -570,12 +683,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>420</x>
-     <y>305</y>
+     <x>452</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
-     <x>453</x>
-     <y>276</y>
+     <x>451</x>
+     <y>312</y>
     </hint>
    </hints>
   </connection>
@@ -586,8 +699,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>245</y>
+     <x>87</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
      <x>217</x>
@@ -602,12 +715,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>420</x>
-     <y>245</y>
+     <x>452</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
-     <x>453</x>
-     <y>216</y>
+     <x>451</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
@@ -618,44 +731,76 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>453</x>
-     <y>216</y>
+     <x>451</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
-     <x>420</x>
-     <y>245</y>
+     <x>452</x>
+     <y>281</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_AccDistance</sender>
+   <sender>spinBox_accMaxDistance</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_accDistance</receiver>
+   <receiver>horizontalSlider_accMaxDistance</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>528</x>
-     <y>306</y>
+     <x>588</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
-     <y>268</y>
+     <x>588</x>
+     <y>298</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_accDistance</sender>
+   <sender>horizontalSlider_accMaxDistance</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_AccDistance</receiver>
+   <receiver>spinBox_accMaxDistance</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>575</x>
-     <y>255</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>544</x>
+     <x>532</x>
      <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>614</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_accCurrentDistance</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_accCurrentDistance</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>604</x>
+     <y>349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>605</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_accCurrentDistance</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_accCurrentDistance</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>561</x>
+     <y>393</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>617</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
