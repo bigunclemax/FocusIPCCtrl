@@ -26,7 +26,7 @@ public:
     SerialHandler(sControllerSettings init_settings, QObject *parent = nullptr);
     ~SerialHandler() override;
 
-    void transaction(int waitTimeout, const std::string &request);
+    int transaction(int waitTimeout, const std::string &request);
 
 private:
     void run() override;
@@ -49,9 +49,12 @@ private:
     std::string m_request;
     int m_waitTimeout = 0;
     QMutex m_mutex;
+    QMutex m_mutex2;
     QWaitCondition m_cond;
+    QWaitCondition m_cond2;
     bool m_quit = false;
     QSemaphore usedBytes = QSemaphore(1);
+    int m_transaction_res = 0;
 };
 
 class QControllerEls27: public CanController {
