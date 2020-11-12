@@ -130,6 +130,10 @@ void FormCar::setupSimulator() {
     /* ACC Distance */
     connect(ui->spinBox_accMaxDistance, QOverload<int>::of(&QSpinBox::valueChanged),
         [this](int i) { g_acc_distance = i; });
+
+    /* Cruise and limit speed */
+    connect(ui->spinBox_cruise, QOverload<int>::of(&QSpinBox::valueChanged),
+            [this](int i) { g_cruise = i; });
 }
 
 void FormCar::start() {
