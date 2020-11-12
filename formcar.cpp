@@ -158,6 +158,7 @@ void FormCar::start() {
     t_eng_temp->start();
     t_turn->start();
     t_acc->start();
+    t_acc2->start();
 }
 
 void FormCar::stop() {
@@ -168,6 +169,7 @@ void FormCar::stop() {
     t_eng_temp->requestInterruption();
     t_turn->requestInterruption();
     t_acc->requestInterruption();
+    t_acc2->requestInterruption();
 
     t_ignition_miscellaneous->wait();
     t_speed_rpm->wait();
@@ -175,4 +177,5 @@ void FormCar::stop() {
     t_eng_temp->wait();
     t_turn->wait();
     t_acc->wait();
+    t_acc2->wait();
 }
