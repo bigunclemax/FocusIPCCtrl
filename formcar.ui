@@ -390,7 +390,7 @@
           <item>
            <widget class="QCheckBox" name="checkBox_accStandby">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Standby</string>
@@ -412,7 +412,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox_accMaxDistance">
+           <widget class="QSpinBox" name="spinBox_accSetDistance">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -427,7 +427,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider_accMaxDistance">
+         <widget class="QSlider" name="horizontalSlider_accSetDistance">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -484,7 +484,7 @@
           <item>
            <widget class="QLabel" name="accCurrentDistanceLabel">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Set Current Distance</string>
@@ -492,30 +492,36 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox_accCurrentDistance">
+           <widget class="QSpinBox" name="spinBox_accSimulateDistance">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
+            </property>
+            <property name="minimum">
+             <number>1</number>
             </property>
             <property name="maximum">
-             <number>8</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider_accCurrentDistance">
+         <widget class="QSlider" name="horizontalSlider_accSimulateDistance">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="minimum">
+           <number>1</number>
           </property>
           <property name="maximum">
-           <number>8</number>
+           <number>10</number>
           </property>
           <property name="pageStep">
            <number>10</number>
           </property>
           <property name="sliderPosition">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -856,9 +862,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_accMaxDistance</sender>
+   <sender>spinBox_accSetDistance</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_accMaxDistance</receiver>
+   <receiver>horizontalSlider_accSetDistance</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -872,9 +878,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_accMaxDistance</sender>
+   <sender>horizontalSlider_accSetDistance</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_accMaxDistance</receiver>
+   <receiver>spinBox_accSetDistance</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -888,9 +894,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_accCurrentDistance</sender>
+   <sender>spinBox_accSimulateDistance</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_accCurrentDistance</receiver>
+   <receiver>horizontalSlider_accSimulateDistance</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -904,9 +910,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_accCurrentDistance</sender>
+   <sender>horizontalSlider_accSimulateDistance</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_accCurrentDistance</receiver>
+   <receiver>spinBox_accSimulateDistance</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -25,7 +25,8 @@ void FormCar::setupSimulator() {
     /* ignition and doors */
     t_ignition_miscellaneous = std::make_unique<IPCthread>(250000);
     t_ignition_miscellaneous->registerCallback([&] {
-            fakeIgnitionMiscellaneous(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot, g_acc_status);
+            fakeIgnitionMiscellaneous(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot,
+                                      g_acc_status, g_acc_standby);
     });
 
     /* speed & rpm */
@@ -57,10 +58,16 @@ void FormCar::setupSimulator() {
         g_turn_flag = !g_turn_flag;
     });
 
-    /* ACC Distance */
+    /* ACC Set Distance */
     t_acc = std::make_unique<IPCthread>(250000);
     t_acc->registerCallback([&] {
-        accDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_status);
+        accSetDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_status, g_acc_standby, g_acc_distance2);
+    });
+
+    /* ACC Simulate Distance */
+    t_acc2 = std::make_unique<IPCthread>(250000);
+    t_acc2->registerCallback([&] {
+        accSimulateDistance(static_cast<CanController*>(controller.get()), g_acc_status, g_acc_standby);
     });
 
     /* Ignition on/off */
@@ -123,9 +130,17 @@ void FormCar::setupSimulator() {
     connect(ui->pushButton_accStatus, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_acc_status = toggled; });
 
-    /* ACC Distance */
-    connect(ui->spinBox_accMaxDistance, QOverload<int>::of(&QSpinBox::valueChanged),
+    /* ACC Standby */
+    connect(ui->checkBox_accStandby, QOverload<bool>::of(&QCheckBox::toggled),
+        [this](bool toggled) { g_acc_standby = toggled; });
+
+    /* ACC Set Distance */
+    connect(ui->spinBox_accSetDistance, QOverload<int>::of(&QSpinBox::valueChanged),
         [this](int i) { g_acc_distance = i; });
+
+    /* ACC Simulate Distance */
+    connect(ui->spinBox_accSimulateDistance, QOverload<int>::of(&QSpinBox::valueChanged),
+        [this](int i) { g_acc_distance2 = i; });
 
     /* Cruise and limit speed */
     connect(ui->spinBox_cruise, QOverload<int>::of(&QSpinBox::valueChanged),

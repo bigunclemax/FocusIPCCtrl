@@ -1,0 +1,5 @@
+# Ignored Files
+/.vs/*
+/VSProject/*
+CMakeLists.txt.mod
+CMakeSettings.json
