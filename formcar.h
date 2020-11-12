@@ -41,7 +41,6 @@ class FormCar : public QWidget
 public:
 	explicit FormCar(std::unique_ptr<CanController> controller, QWidget *parent = nullptr);
 	~FormCar() override;
-    void showEvent( QShowEvent* event ) override;
 	void start();
     void stop();
 

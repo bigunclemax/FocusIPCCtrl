@@ -9,17 +9,13 @@ FormCar::FormCar(std::unique_ptr<CanController> controller, QWidget *parent):
 {
     ui->setupUi(this);
     setupSimulator();
+    start();
 }
 
 FormCar::~FormCar()
 {
     stop();
 	delete ui;
-}
-
-void FormCar::showEvent( QShowEvent* event ) {
-    QWidget::showEvent( event );
-    start();
 }
 
 void FormCar::setupSimulator() {
