@@ -51,7 +51,7 @@ private:
 	void setupSimulator();
 
     std::unique_ptr<CanController> controller;
-    std::unique_ptr<IPCthread>     t_ignition_doors;
+    std::unique_ptr<IPCthread>     t_ignition_miscellaneous;
     std::unique_ptr<IPCthread>     t_speed_rpm;
     std::unique_ptr<IPCthread>     t_eng_temp;
     std::unique_ptr<IPCthread>     t_fuel_temp;

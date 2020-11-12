@@ -27,9 +27,9 @@ void FormCar::setupSimulator() {
     controller->set_protocol(CanController::CAN_MS);
 
     /* ignition and doors */
-    t_ignition_doors = std::make_unique<IPCthread>(250000);
-    t_ignition_doors->registerCallback([&] {
-            fakeIgnitionDoors(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot);
+    t_ignition_miscellaneous = std::make_unique<IPCthread>(250000);
+    t_ignition_miscellaneous->registerCallback([&] {
+            fakeIgnitionMiscellaneous(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot, g_acc_status);
     });
 
     /* speed & rpm */
@@ -137,7 +137,7 @@ void FormCar::start() {
     resetDash(static_cast<CanController*>(static_cast<CanController*>(controller.get())));
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     /* start threads */
-    t_ignition_doors->start();
+    t_ignition_miscellaneous->start();
     t_speed_rpm->start();
     t_fuel_temp->start();
     t_eng_temp->start();
@@ -147,14 +147,14 @@ void FormCar::start() {
 
 void FormCar::stop() {
     /* start threads */
-    t_ignition_doors->requestInterruption();
+    t_ignition_miscellaneous->requestInterruption();
     t_speed_rpm->requestInterruption();
     t_fuel_temp->requestInterruption();
     t_eng_temp->requestInterruption();
     t_turn->requestInterruption();
     t_acc->requestInterruption();
 
-    t_ignition_doors->wait();
+    t_ignition_miscellaneous->wait();
     t_speed_rpm->wait();
     t_fuel_temp->wait();
     t_eng_temp->wait();

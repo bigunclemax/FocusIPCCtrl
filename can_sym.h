@@ -33,7 +33,7 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
     rpm /= 2;
     speed = speed * 10000 / 105; //km\h
 
-    std::vector<uint8_t> data = { warning, 0x03, 0x0a, 0x01,
+    std::vector<uint8_t> data = { warning, 0xcf, 0x00, 0x00,
                                   (uint8_t)((rpm >> 8u)),
                                   (uint8_t)(rpm & 0xFFu),
                                   (uint8_t)((speed >> 8u)),
@@ -41,13 +41,14 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
     controller->RAW_transaction(data);
 }
 
-void fakeIgnitionDoors(CanController *controller, uint8_t g_drv_door, uint8_t g_psg_door, uint8_t g_rdrv_door, uint8_t g_rpsg_door, uint8_t g_hood,
-                       uint8_t g_boot) {
+void fakeIgnitionMiscellaneous(CanController *controller, uint8_t g_drv_door, uint8_t g_psg_door, uint8_t g_rdrv_door, uint8_t g_rpsg_door, uint8_t g_hood,
+                       uint8_t g_boot, uint8_t g_acc_status) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
     if(controller->set_ecu_address(0x080)) return;
+    uint8_t acc = (g_acc_status) ? 0x67 : 0x00;
     uint8_t door = (!g_drv_door) | (!g_psg_door << 1u) | (!g_rdrv_door << 2u) | (!g_rpsg_door << 3u) | (!g_boot << 4u) | (!g_hood << 5u);
-    std::vector<uint8_t> data = { 0x77, 0x03, 0x07, door, 0xD9, 0x07, 0x03, 0x82 };
+    std::vector<uint8_t> data = { 0x77, 0x03, 0x07, door, 0xD9, acc, 0x03, 0x82 };
     controller->RAW_transaction(data);
 }
 
