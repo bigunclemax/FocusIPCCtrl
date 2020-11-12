@@ -70,7 +70,8 @@ SerialHandler::~SerialHandler()
 int SerialHandler::transaction(int waitTimeout, const std::string &request)
 {
     usedBytes.acquire();
-    const QMutexLocker locker(&m_mutex);
+    m_mutex.lock();
+    const QMutexLocker locker2(&m_mutex2);
     m_waitTimeout = waitTimeout;
     m_request = request;
     if (!isRunning())
@@ -78,7 +79,7 @@ int SerialHandler::transaction(int waitTimeout, const std::string &request)
     else
         m_cond.wakeOne();
 
-    const QMutexLocker locker2(&m_mutex2);
+    m_mutex.unlock();           //FIXME: may cause to race condition
     m_cond2.wait(&m_mutex2);
     return m_transaction_res;
 }
@@ -86,56 +87,35 @@ int SerialHandler::transaction(int waitTimeout, const std::string &request)
 void SerialHandler::run()
 {
 
-    bool currentPortNameChanged = false;
-    int  transaction_res = 0;
-
-    m_mutex.lock();
-    QString currentPortName;
-    if (currentPortName != m_portName) {
-        currentPortName = m_portName;
-        currentPortNameChanged = true;
-    }
-
-    int currentWaitTimeout = m_waitTimeout;
-    std::string currentRequest = m_request;
-    m_mutex.unlock();
-    QSerialPort serial;
-
-    if (currentPortName.isEmpty()) {
+    if (m_portName.isEmpty()) {
         std::cerr << "No port name specified\n";
         usedBytes.release();
         return;
     }
 
+    QSerialPort serial;
+    serial.setPortName(m_portName);
+
+    if (!serial.open(QIODevice::ReadWrite)) {
+        std::cerr << "Can't open " << m_portName.toStdString() << ", error code " << serial.error() << std::endl;
+        return;
+    } else if(_init(serial)) {
+        std::cerr << "Can't init els device" << std::endl;
+        return;
+    }
+
+    int currentWaitTimeout = m_waitTimeout;
+    std::string currentRequest = m_request;
+
     while (!m_quit) {
-        if (currentPortNameChanged) {
-            serial.close();
-            serial.setPortName(currentPortName);
 
-            if (!serial.open(QIODevice::ReadWrite)) {
-                std::cerr << "Can't open " << m_portName.toStdString() << ", error code " << serial.error() << std::endl;
-                transaction_res = -1;
-            } else if(_init(serial)) {
-                std::cerr << "Can't init els device" << std::endl;
-                transaction_res = -1;
-            }
-        }
+        int transaction_res = serial_transaction(serial, currentRequest, currentWaitTimeout).first;
 
-        if(!transaction_res) {
-            transaction_res = serial_transaction(serial, currentRequest, currentWaitTimeout).first;
-        }
-
-        m_mutex.lock();
-        m_transaction_res = transaction_res;
+        m_mutex.lock();     //FIXME: may cause to race condition
         m_cond2.wakeOne();
+        m_transaction_res = transaction_res;
         usedBytes.release();
         m_cond.wait(&m_mutex);
-        if (currentPortName != m_portName) {
-            currentPortName = m_portName;
-            currentPortNameChanged = true;
-        } else {
-            currentPortNameChanged = false;
-        }
         currentWaitTimeout = m_waitTimeout;
         currentRequest = m_request;
         m_mutex.unlock();
