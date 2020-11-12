@@ -67,7 +67,7 @@ SerialHandler::~SerialHandler()
     wait();
 }
 
-void SerialHandler::transaction(int waitTimeout, const std::string &request)
+int SerialHandler::transaction(int waitTimeout, const std::string &request)
 {
     usedBytes.acquire();
     const QMutexLocker locker(&m_mutex);
@@ -77,12 +77,17 @@ void SerialHandler::transaction(int waitTimeout, const std::string &request)
         start();
     else
         m_cond.wakeOne();
+
+    const QMutexLocker locker2(&m_mutex2);
+    m_cond2.wait(&m_mutex2);
+    return m_transaction_res;
 }
 
 void SerialHandler::run()
 {
 
     bool currentPortNameChanged = false;
+    int  transaction_res = 0;
 
     m_mutex.lock();
     QString currentPortName;
@@ -109,44 +114,20 @@ void SerialHandler::run()
 
             if (!serial.open(QIODevice::ReadWrite)) {
                 std::cerr << "Can't open " << m_portName.toStdString() << ", error code " << serial.error() << std::endl;
-                usedBytes.release();
-                return;
-            }
-
-            if(_init(serial)) {
+                transaction_res = -1;
+            } else if(_init(serial)) {
                 std::cerr << "Can't init els device" << std::endl;
-                usedBytes.release();
-                return;
+                transaction_res = -1;
             }
         }
-        // write request
-        if(serial_transaction(serial, currentRequest, currentWaitTimeout).first) {
-            std::cerr << "serial_transaction error" << std::endl;
-        }
-#ifdef _NO
-        const QByteArray requestData = currentRequest.toUtf8();
-        serial.write(requestData);
-        if (serial.waitForBytesWritten(m_waitTimeout)) {
-            // read response
-            if (serial.waitForReadyRead(currentWaitTimeout)) {
-                QByteArray responseData = serial.readAll();
-                while (serial.waitForReadyRead(10))
-                    responseData += serial.readAll();
 
-                const QString response = QString::fromUtf8(responseData);
-//                emit this->response(response);
-            } else {
-                std::cerr << "Wait read response timeout \n";
-//                emit timeout(tr("Wait read response timeout %1")
-//                                     .arg(QTime::currentTime().toString()));
-            }
-        } else {
-            std::cerr << "Wait write request timeout \n";
-//            emit timeout(tr("Wait write request timeout %1")
-//                                 .arg(QTime::currentTime().toString()));
+        if(!transaction_res) {
+            transaction_res = serial_transaction(serial, currentRequest, currentWaitTimeout).first;
         }
-#endif
+
         m_mutex.lock();
+        m_transaction_res = transaction_res;
+        m_cond2.wakeOne();
         usedBytes.release();
         m_cond.wait(&m_mutex);
         if (currentPortName != m_portName) {
