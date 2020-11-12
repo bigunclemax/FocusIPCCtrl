@@ -23,7 +23,7 @@ class SerialHandler : public QThread {
     Q_OBJECT
 
 public:
-    SerialHandler(sControllerSettings init_settings, QObject *parent = nullptr);
+    explicit SerialHandler(sControllerSettings init_settings, QObject *parent = nullptr);
     ~SerialHandler() override;
 
     int transaction(int waitTimeout, const std::string &request);
@@ -67,8 +67,8 @@ public:
     int init() override { return 0; };
     int set_ecu_address(unsigned ecu_address) override;
     int set_protocol(CAN_PROTO protocol) override;
-
-    int RAW_transaction(std::vector<uint8_t> &data) override;
+    int send_data(std::vector<uint8_t> &data) override;
+    int transaction(unsigned ecu_address, std::vector<uint8_t> &data) override;
 
 private:
     int control_msg(const std::string &req);

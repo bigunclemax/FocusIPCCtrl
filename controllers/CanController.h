@@ -22,8 +22,8 @@ public:
     virtual int init() = 0;
     virtual int set_ecu_address(unsigned ecu_address) =0;
     virtual int set_protocol(CAN_PROTO protocol) =0;
-
-    virtual int RAW_transaction(std::vector<uint8_t> &data) =0;
+    virtual int send_data(std::vector<uint8_t> &data) =0;
+    virtual int transaction(unsigned ecu_address, std::vector<uint8_t> &data) =0;
 };
 
 #endif //IPCFLASHER_CANCONTROLLER_H

@@ -383,7 +383,7 @@ int QControllerEls27::control_msg(const std::string &req) {
     return 0; //TODO: add return code
 }
 
-int QControllerEls27::RAW_transaction(std::vector<uint8_t> &data) {
+int QControllerEls27::send_data(std::vector<uint8_t> &data) {
     auto tx_size = data.size() > CAN_frame_sz ? 8 : data.size();
     std::string io_buff;
     io_buff.resize(tx_size * 2 + 1);
@@ -403,6 +403,14 @@ int QControllerEls27::set_ecu_address(unsigned int ecu_address) {
 int QControllerEls27::set_protocol(CanController::CAN_PROTO protocol) {
     if(CAN_MS == protocol)
         control_msg("STP53");   //ISO 15765, 11-bit Tx, 125kbps, DLC=8
+
+    return 0;
+}
+
+int QControllerEls27::transaction(unsigned int ecu_address, std::vector<uint8_t> &data) {
+
+    auto res = set_ecu_address(ecu_address);
+    res = send_data(data);
 
     return 0;
 }

@@ -62,6 +62,7 @@ private:
     int  g_eng_temp      = 0;
     int  g_fuel          = 0;
     int  g_acc_distance  = 0;
+    int  g_cruise        = 0;
     bool g_turn_l        = false;
     bool g_turn_r        = false;
     bool g_turn_flag     = false;

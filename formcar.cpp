@@ -54,9 +54,9 @@ void FormCar::setupSimulator() {
     t_turn = std::make_unique<IPCthread>(250000);
     t_turn->registerCallback([&]{
         if(g_turn_flag)
-            fakeTurn(static_cast<CanController*>(controller.get()), g_turn_l, g_turn_r);
+            fakeTurn(static_cast<CanController*>(controller.get()), g_turn_l, g_turn_r, g_cruise);
         else
-            fakeTurn(static_cast<CanController*>(controller.get()), false, false);
+            fakeTurn(static_cast<CanController*>(controller.get()), false, false, g_cruise);
 
         g_turn_flag = !g_turn_flag;
     });
