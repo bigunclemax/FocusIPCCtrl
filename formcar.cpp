@@ -61,7 +61,7 @@ void FormCar::setupSimulator() {
     /* ACC Set Distance */
     t_acc = std::make_unique<IPCthread>(250000);
     t_acc->registerCallback([&] {
-        accSetDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_status, g_acc_standby, g_acc_distance2);
+        accSetDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_distance2, g_acc_status, g_acc_standby);
     });
 
     /* ACC Simulate Distance */
@@ -134,13 +134,13 @@ void FormCar::setupSimulator() {
     connect(ui->checkBox_accStandby, QOverload<bool>::of(&QCheckBox::toggled),
         [this](bool toggled) { g_acc_standby = toggled; });
 
-    /* ACC Set Distance */
-    connect(ui->spinBox_accSetDistance, QOverload<int>::of(&QSpinBox::valueChanged),
-        [this](int i) { g_acc_distance = i; });
-
     /* ACC Simulate Distance */
     connect(ui->spinBox_accSimulateDistance, QOverload<int>::of(&QSpinBox::valueChanged),
         [this](int i) { g_acc_distance2 = i; });
+
+    /* ACC Set Distance */
+    connect(ui->spinBox_accSetDistance, QOverload<int>::of(&QSpinBox::valueChanged),
+        [this](int i) { g_acc_distance = i; });
 
     /* Cruise and limit speed */
     connect(ui->spinBox_cruise, QOverload<int>::of(&QSpinBox::valueChanged),
