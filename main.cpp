@@ -30,9 +30,11 @@ int main(int argc, char *argv[])
 
 
         form = std::make_unique<FormCar>(std::move(controller));
+        form->setWindowTitle("Ford Focus MK3 IPC Simulator");
         form->show();
     });
 
+    init_dialog->setWindowTitle("Settings");
     init_dialog->show();
 
 	return QApplication::exec();
