@@ -82,6 +82,12 @@ void FormCar::setupSimulator() {
         changeDimming(static_cast<CanController*>(controller.get()), g_dimming);
     });
 
+    /* External temperature */
+    t_external_temp = std::make_unique<IPCthread>(250000);
+    t_external_temp->registerCallback([&] {
+        fakeExternalTemp(static_cast<CanController*>(controller.get()), g_external_temp);
+    });
+
     /* Ignition on/off */
     connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool i){ i ? start() : stop(); });
@@ -165,6 +171,10 @@ void FormCar::setupSimulator() {
     /* Dimming */
     connect(ui->dial_Dimming, QOverload<int>::of(&QSlider::valueChanged),
         [this](int i) { g_dimming = i; });
+
+    /* External temperature */
+    connect(ui->spinBox_externalTemp, QOverload<int>::of(&QSpinBox::valueChanged),
+            [this](int i) { g_external_temp = i; });
 }
 
 void FormCar::start() {
@@ -181,6 +191,7 @@ void FormCar::start() {
     t_acc2->start();
     t_alarm->start();
     t_dimming->start();
+    t_external_temp->start();
 }
 
 void FormCar::stop() {
@@ -194,6 +205,7 @@ void FormCar::stop() {
     t_acc2->requestInterruption();
     t_alarm->requestInterruption();
     t_dimming->requestInterruption();
+    t_external_temp->requestInterruption();
 
     t_ignition_miscellaneous->wait();
     t_speed_rpm->wait();
@@ -204,4 +216,5 @@ void FormCar::stop() {
     t_acc2->wait();
     t_alarm->wait();
     t_dimming->wait();
+    t_external_temp->wait();
 }

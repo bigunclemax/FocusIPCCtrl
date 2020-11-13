@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>858</width>
-    <height>391</height>
+    <width>1015</width>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,16 +46,19 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton_2">
+       <widget class="QRadioButton" name="radioButton">
         <property name="text">
-         <string>Limit</string>
+         <string>Cruise</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="radioButton_2">
         <property name="text">
-         <string>Cruise</string>
+         <string>Limit</string>
         </property>
        </widget>
       </item>
@@ -555,7 +558,7 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="1" alignment="Qt::AlignRight">
     <widget class="QLabel" name="labelExternalTemp">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -567,12 +570,6 @@
       <size>
        <width>0</width>
        <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>95</width>
-       <height>16777215</height>
       </size>
      </property>
      <property name="text">
@@ -821,6 +818,9 @@
      </property>
      <property name="showGroupSeparator" stdset="0">
       <bool>true</bool>
+     </property>
+     <property name="minimum">
+      <number>-40</number>
      </property>
      <property name="maximum">
       <number>64</number>

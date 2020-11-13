@@ -59,6 +59,7 @@ private:
     std::unique_ptr<IPCthread>     t_acc2;
     std::unique_ptr<IPCthread>     t_alarm;
     std::unique_ptr<IPCthread>     t_dimming;
+    std::unique_ptr<IPCthread>     t_external_temp;
     int g_rpm            = 0;
     int g_speed          = 0;
     int g_eng_temp       = 0;
@@ -67,6 +68,7 @@ private:
     int g_acc_distance2  = 0;
     int g_cruise         = 0;
     int g_dimming        = 1;
+    int  g_external_temp = 0;
     bool g_turn_l        = false;
     bool g_turn_r        = false;
     bool g_turn_flag     = false;

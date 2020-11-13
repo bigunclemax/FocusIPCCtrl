@@ -112,6 +112,21 @@ void changeDimming(CanController* controller, int dimming) {
     controller->transaction(0x290, data);
 }
 
+void fakeExternalTemp(CanController* controller, uint16_t temp) {
+
+    const std::lock_guard<std::mutex> lock(m_mutex);
+
+    temp = 0x0160 + (temp + 40) * 4;
+
+    std::vector<uint8_t> data = { 0x00, 0x00, 0x00,
+                                  static_cast<unsigned char>(((temp >> 8u) & 0xFu)),
+                                  static_cast<unsigned char>((temp & 0xFFu)), 0x80, 0x00, 0x01 };
+    controller->transaction(0x1a4, data);
+
+    data = { 0x06, 0x00, 0x00, 0x00, 0x1e, 0x36, 0x9e, 0x4c };
+    controller->transaction(0x2a0, data);
+}
+
 void resetDash(CanController *controller) {
     const std::lock_guard<std::mutex> lock(m_mutex);
     static bool t = false;
