@@ -67,7 +67,7 @@ void fakeTurn(CanController *controller, bool left, bool right, uint16_t cruise_
 
     const std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<uint8_t>  data = { 0x82, static_cast<unsigned char>(0x83u | (right << 3u) | (left << 2u)),
-                                  0x00, 0x02, 0x80, static_cast<unsigned char>(cruise_speed & 0xFFu), 0x00, 0x00 };
+                                  0x00, 0x02, 0x80, static_cast<unsigned char>((cruise_speed * 20u/11) & 0xFFu), 0x00, 0x00 };
     controller->transaction(0x03A, data);
 }
 
