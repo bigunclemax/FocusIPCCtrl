@@ -22,7 +22,7 @@ void FormCar::setupSimulator() {
 
     controller->set_protocol(CanController::CAN_MS);
 
-    /* ignition and doors */
+    /* ignition and miscellaneus */
     t_ignition_miscellaneous = std::make_unique<IPCthread>(250000);
     t_ignition_miscellaneous->registerCallback([&] {
             fakeIgnitionMiscellaneous(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot,
@@ -47,7 +47,7 @@ void FormCar::setupSimulator() {
         fakeEngineTemp(static_cast<CanController*>(controller.get()), g_eng_temp);
     });
 
-    /* turns */
+    /* Turns */
     t_turn = std::make_unique<IPCthread>(250000);
     t_turn->registerCallback([&]{
         if(g_turn_flag)

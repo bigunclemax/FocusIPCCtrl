@@ -71,6 +71,15 @@ void fakeTurn(CanController *controller, bool left, bool right, uint16_t cruise_
     controller->transaction(0x03A, data);
 }
 
+void accSimulateDistance(CanController* controller, bool accStatus, bool accStandby) {
+
+    const std::lock_guard<std::mutex> lock(m_mutex);
+    if (accStatus && !accStandby) {
+        std::vector<uint8_t>  data = { 0x03, 0xd2, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00 };
+        controller->transaction(0x020, data);
+    }
+}
+
 void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accDistance2, bool accStatus, bool accStandby) {
 
     const std::lock_guard<std::mutex> lock(m_mutex);
@@ -78,19 +87,11 @@ void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accD
         accDistance = accDistance * 0x10;
         std::vector<uint8_t>  data = { 0x00, 0x9C, accDistance, 0x80, 0x11, 0xF4, 0xE8, 0x54 };
         controller->transaction(0x070, data);
-    } else if (accStatus && !accStandby) {
-        accDistance2 = accDistance2 * 0xA2;
+    }
+    else if (accStatus && !accStandby) {
+        accDistance2 = 0xEF + (accDistance2 * 2);
         std::vector<uint8_t>  data = { 0x00, 0x9C, 0x22, 0x22, accDistance2, 0xF4, 0xE8, 0x54 };
         controller->transaction(0x070, data);
-    }
-}
-
-void accSimulateDistance(CanController* controller, bool accStatus, bool accStandby) {
-
-    const std::lock_guard<std::mutex> lock(m_mutex);
-    if (accStatus && !accStandby) {
-        std::vector<uint8_t>  data = { 0x03, 0xd2, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00 };
-        controller->transaction(0x020, data);
     }
 }
 
