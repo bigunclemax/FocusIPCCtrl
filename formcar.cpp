@@ -70,6 +70,18 @@ void FormCar::setupSimulator() {
         accSimulateDistance(static_cast<CanController*>(controller.get()), g_acc_status, g_acc_standby);
     });
 
+    /* Play Alarm Sound */
+    t_alarm = std::make_unique<IPCthread>(250000);
+    t_alarm->registerCallback([&] {
+        playAlarm(static_cast<CanController*>(controller.get()), g_alarm);
+    });
+
+    /* LCD Dimming */
+    t_dimming = std::make_unique<IPCthread>(250000);
+    t_dimming->registerCallback([&] {
+        changeDimming(static_cast<CanController*>(controller.get()), g_dimming);
+    });
+
     /* Ignition on/off */
     connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool i){ i ? start() : stop(); });
@@ -145,6 +157,14 @@ void FormCar::setupSimulator() {
     /* Cruise and limit speed */
     connect(ui->spinBox_cruise, QOverload<int>::of(&QSpinBox::valueChanged),
             [this](int i) { g_cruise = i; });
+
+    /* Alarm */
+    connect(ui->pushButton_alarmSound, QOverload<bool>::of(&QPushButton::toggled),
+        [this](bool toggled) { g_alarm = toggled; });
+
+    /* Dimming */
+    connect(ui->dial_Dimming, QOverload<int>::of(&QSlider::valueChanged),
+        [this](int i) { g_dimming = i; });
 }
 
 void FormCar::start() {
@@ -159,6 +179,8 @@ void FormCar::start() {
     t_turn->start();
     t_acc->start();
     t_acc2->start();
+    t_alarm->start();
+    t_dimming->start();
 }
 
 void FormCar::stop() {
@@ -170,6 +192,8 @@ void FormCar::stop() {
     t_turn->requestInterruption();
     t_acc->requestInterruption();
     t_acc2->requestInterruption();
+    t_alarm->requestInterruption();
+    t_dimming->requestInterruption();
 
     t_ignition_miscellaneous->wait();
     t_speed_rpm->wait();
@@ -178,4 +202,6 @@ void FormCar::stop() {
     t_turn->wait();
     t_acc->wait();
     t_acc2->wait();
+    t_alarm->wait();
+    t_dimming->wait();
 }

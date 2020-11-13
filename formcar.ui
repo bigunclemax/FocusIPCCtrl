@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>858</width>
-    <height>394</height>
+    <height>391</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -26,62 +29,8 @@
    <property name="bottomMargin">
     <number>9</number>
    </property>
-   <item row="8" column="0" colspan="3">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Miscellaneous</string>
-     </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="pushButton_speedWarning">
-        <property name="text">
-         <string>Send Speed Warning</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_dpfRegen">
-        <property name="text">
-         <string>Send DPF Require Regen</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_dpfFull">
-        <property name="text">
-         <string>Send DPF Full</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="title">
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Ford Focus MK3 IPC Simulator</string>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="4" rowspan="4">
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="cruiseBox">
      <property name="title">
       <string>Cruise and Limit</string>
      </property>
@@ -126,6 +75,167 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="6" column="0" colspan="3">
+    <layout class="QHBoxLayout" name="fuelEngineTempBox">
+     <item>
+      <layout class="QVBoxLayout" name="fuelLayout">
+       <item>
+        <layout class="QHBoxLayout" name="sub_fuelLayout">
+         <item>
+          <widget class="QLabel" name="fuelLabel">
+           <property name="text">
+            <string>Fuel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_Fuel">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_Fuel">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="engineTempLayout">
+       <item>
+        <layout class="QHBoxLayout" name="sub_engineTempLayout">
+         <item>
+          <widget class="QLabel" name="engineTempLabel">
+           <property name="text">
+            <string>Engine Temp</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_Temp">
+           <property name="minimum">
+            <number>-60</number>
+           </property>
+           <property name="maximum">
+            <number>195</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_EngTemp">
+         <property name="minimum">
+          <number>-60</number>
+         </property>
+         <property name="maximum">
+          <number>195</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="4">
+    <widget class="QGroupBox" name="dimming_Box">
+     <property name="title">
+      <string>LCD Dimming</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QDial" name="dial_Dimming">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="inputMethodHints">
+         <set>Qt::ImhNone</set>
+        </property>
+        <property name="maximum">
+         <number>1</number>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="dimming_Layout">
+        <item>
+         <widget class="QLabel" name="dimmingLow">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Low</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="dimmingHigh">
+          <property name="text">
+           <string>High</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <layout class="QHBoxLayout" name="ignitionBox">
+     <item>
+      <widget class="QPushButton" name="pushButton_Ignition">
+       <property name="text">
+        <string>Ignition</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="4" column="0" colspan="3">
     <widget class="QGroupBox" name="lightsBox">
@@ -250,103 +360,6 @@
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="4" column="3">
-    <widget class="QGroupBox" name="doorsBox">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="title">
-      <string>Doors</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton_bootButton">
-        <property name="text">
-         <string>Boot</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="pushButton_rrDoorButton">
-        <property name="text">
-         <string>Right Rear</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="pushButton_lrDoorButton">
-        <property name="text">
-         <string>Left Rear</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_lfDoorButton">
-        <property name="text">
-         <string>Left Front</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="pushButton_rfDoorButton">
-        <property name="text">
-         <string>Right Front</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_hoodButton">
-        <property name="text">
-         <string>Hood</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="labelExternalTemp">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>95</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>External Temp (°C)</string>
-     </property>
     </widget>
    </item>
    <item row="5" column="3" rowspan="4">
@@ -542,99 +555,30 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="3">
-    <layout class="QHBoxLayout" name="ignitionBox">
-     <item>
-      <widget class="QPushButton" name="pushButton_Ignition">
-       <property name="text">
-        <string>Ignition</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="6" column="0" colspan="3">
-    <layout class="QHBoxLayout" name="fuelEngineTempBox">
-     <item>
-      <layout class="QVBoxLayout" name="fuelLayout">
-       <item>
-        <layout class="QHBoxLayout" name="sub_fuelLayout">
-         <item>
-          <widget class="QLabel" name="fuelLabel">
-           <property name="text">
-            <string>Fuel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_Fuel">
-           <property name="maximum">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_Fuel">
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="engineTempLayout">
-       <item>
-        <layout class="QHBoxLayout" name="sub_engineTempLayout">
-         <item>
-          <widget class="QLabel" name="engineTempLabel">
-           <property name="text">
-            <string>Engine Temp</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_Temp">
-           <property name="minimum">
-            <number>-60</number>
-           </property>
-           <property name="maximum">
-            <number>195</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_EngTemp">
-         <property name="minimum">
-          <number>-60</number>
-         </property>
-         <property name="maximum">
-          <number>195</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
+   <item row="1" column="1">
+    <widget class="QLabel" name="labelExternalTemp">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>95</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>External Temp (°C)</string>
+     </property>
+    </widget>
    </item>
    <item row="5" column="0" colspan="3">
     <layout class="QHBoxLayout" name="speedRPMBox">
@@ -698,11 +642,156 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+         <property name="tickInterval">
+          <number>0</number>
+         </property>
         </widget>
        </item>
       </layout>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="title">
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Ford Focus MK3 IPC Simulator</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QGroupBox" name="doorsBox">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Doors</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_bootButton">
+        <property name="text">
+         <string>Boot</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_rrDoorButton">
+        <property name="text">
+         <string>Right Rear</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pushButton_lrDoorButton">
+        <property name="text">
+         <string>Left Rear</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_lfDoorButton">
+        <property name="text">
+         <string>Left Front</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_rfDoorButton">
+        <property name="text">
+         <string>Right Front</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_hoodButton">
+        <property name="text">
+         <string>Hood</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="3">
+    <widget class="QGroupBox" name="miscellaneusBox">
+     <property name="title">
+      <string>Miscellaneous</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_dpfFull">
+        <property name="text">
+         <string>Send DPF Full Message</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_speedWarning">
+        <property name="text">
+         <string>Send Speed Warning Message</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoRepeat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_dpfRegen">
+        <property name="text">
+         <string>Send DPF Require Regen Message</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_alarmSound">
+        <property name="text">
+         <string>Play Alarm Sound</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item row="1" column="2">
     <widget class="QSpinBox" name="spinBox_externalTemp">
@@ -749,12 +838,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>87</x>
-     <y>288</y>
+     <x>98</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
-     <x>226</x>
-     <y>259</y>
+     <x>277</x>
+     <y>301</y>
     </hint>
    </hints>
   </connection>
@@ -765,12 +854,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>259</y>
+     <x>277</x>
+     <y>301</y>
     </hint>
     <hint type="destinationlabel">
-     <x>87</x>
-     <y>288</y>
+     <x>98</x>
+     <y>330</y>
     </hint>
    </hints>
   </connection>
@@ -781,12 +870,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>184</y>
+     <x>277</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
-     <x>87</x>
-     <y>228</y>
+     <x>98</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>
@@ -797,12 +886,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>451</x>
-     <y>259</y>
+     <x>553</x>
+     <y>301</y>
     </hint>
     <hint type="destinationlabel">
-     <x>452</x>
-     <y>288</y>
+     <x>554</x>
+     <y>330</y>
     </hint>
    </hints>
   </connection>
@@ -813,12 +902,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>288</y>
+     <x>554</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
-     <x>451</x>
-     <y>259</y>
+     <x>553</x>
+     <y>301</y>
     </hint>
    </hints>
   </connection>
@@ -829,12 +918,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>87</x>
-     <y>228</y>
+     <x>98</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel">
-     <x>217</x>
-     <y>184</y>
+     <x>277</x>
+     <y>241</y>
     </hint>
    </hints>
   </connection>
@@ -845,12 +934,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>228</y>
+     <x>554</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel">
-     <x>451</x>
-     <y>199</y>
+     <x>553</x>
+     <y>241</y>
     </hint>
    </hints>
   </connection>
@@ -861,12 +950,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>451</x>
-     <y>199</y>
+     <x>553</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
-     <x>452</x>
-     <y>228</y>
+     <x>554</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>
@@ -877,12 +966,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>588</x>
-     <y>241</y>
+     <x>735</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
-     <x>588</x>
-     <y>266</y>
+     <x>736</x>
+     <y>323</y>
     </hint>
    </hints>
   </connection>
@@ -893,12 +982,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>532</x>
-     <y>262</y>
+     <x>736</x>
+     <y>323</y>
     </hint>
     <hint type="destinationlabel">
-     <x>614</x>
-     <y>238</y>
+     <x>735</x>
+     <y>287</y>
     </hint>
    </hints>
   </connection>
@@ -909,12 +998,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>604</x>
-     <y>305</y>
+     <x>735</x>
+     <y>369</y>
     </hint>
     <hint type="destinationlabel">
-     <x>605</x>
-     <y>336</y>
+     <x>736</x>
+     <y>421</y>
     </hint>
    </hints>
   </connection>
@@ -925,12 +1014,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>561</x>
-     <y>340</y>
+     <x>736</x>
+     <y>421</y>
     </hint>
     <hint type="destinationlabel">
-     <x>617</x>
-     <y>303</y>
+     <x>735</x>
+     <y>369</y>
     </hint>
    </hints>
   </connection>

@@ -95,6 +95,23 @@ void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accD
     }
 }
 
+void playAlarm(CanController* controller, bool alarm) {
+
+    const std::lock_guard<std::mutex> lock(m_mutex);
+    if (alarm) {
+        std::vector<uint8_t>  data = { 0x00, 0xC0, 0x80, 0x21, 0xC0, 0x80, 0x00, 0x00 };
+        controller->transaction(0x300, data);
+    }
+}
+
+void changeDimming(CanController* controller, int dimming) {
+
+    const std::lock_guard<std::mutex> lock(m_mutex);
+    uint8_t dimLevel = (dimming) ? 0x05 : 0x06;
+    std::vector<uint8_t>  data = { 0x98, 0x00, 0x1, 0x00, dimLevel, 0x00, 0x00, 0x00 };
+    controller->transaction(0x290, data);
+}
+
 void resetDash(CanController *controller) {
     const std::lock_guard<std::mutex> lock(m_mutex);
     static bool t = false;
