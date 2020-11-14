@@ -32,14 +32,14 @@ const int SerialHandler::baud_arr_sz = sizeof(baud_arr) / sizeof(baud_arr[0]);
 
 static inline void print_buffer(int rdlen, const unsigned char *const buf, int isWrite) {
 
-#ifdef DEBUG
+#ifdef DEBUG_BUFFERS
     std::vector<uint8_t> _str(rdlen+1);
     _str[rdlen] = 0;
 
     fprintf(stderr,"%s %d:", isWrite? "W" : "R", rdlen);
     /* first display as hex numbers then ASCII */
     for (int i =0; i < rdlen; i++) {
-#ifdef DEBUG_PRINT_HEX
+#ifdef DEBUG_BUFFERS_HEX
         fprintf(stderr," 0x%x", buf[i]);
 #endif
         if (buf[i] < ' ')
@@ -394,3 +394,7 @@ int QControllerEls27::transaction(unsigned int ecu_address, std::vector<uint8_t>
 
     return 0;
 }
+
+//if(ecu_address == 0x3a || ecu_address == 0x80) {
+//printf("0x%03x ", ecu_address);for(auto d : data) {printf("0x%02x ", d);}printf("\n");
+//}
