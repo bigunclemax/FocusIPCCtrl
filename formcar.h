@@ -47,19 +47,16 @@ public:
 private:
 	Ui::FormCar *ui;
 
+    void setupGui();
 	void setupSimulator();
 
+	void addThread( std::function<void(void)> f, unsigned long interval = 250000);
+	void startThreads();
+    void stopThreads();
+
     std::unique_ptr<CanController> controller;
-    std::unique_ptr<IPCthread>     t_ignition_miscellaneous;
-    std::unique_ptr<IPCthread>     t_speed_rpm;
-    std::unique_ptr<IPCthread>     t_eng_temp;
-    std::unique_ptr<IPCthread>     t_fuel_temp;
-    std::unique_ptr<IPCthread>     t_turn;
-    std::unique_ptr<IPCthread>     t_acc;
-    std::unique_ptr<IPCthread>     t_acc2;
-    std::unique_ptr<IPCthread>     t_alarm;
-    std::unique_ptr<IPCthread>     t_dimming;
-    std::unique_ptr<IPCthread>     t_external_temp;
+    std::vector<std::unique_ptr<IPCthread>> m_threads;
+
     int g_rpm            = 0;
     int g_speed          = 0;
     int g_eng_temp       = 0;
