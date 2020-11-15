@@ -127,6 +127,16 @@ void fakeExternalTemp(CanController* controller, uint16_t temp) {
     controller->transaction(0x2a0, data);
 }
 
+void dpfStatus(CanController* controller, bool full, bool regen) {
+
+    const std::lock_guard<std::mutex> lock(m_mutex);
+    uint8_t dpfStatus = (full) ? 0x88 : 0x66;
+    if (!full && !regen)
+        dpfStatus = 0x00;
+    std::vector<uint8_t>  data = { 0x00, 0x00, 0x00, 0x00, 0x00, dpfStatus, 0x00, 0x00 };
+    controller->transaction(0x083, data);
+}
+
 void resetDash(CanController *controller) {
     const std::lock_guard<std::mutex> lock(m_mutex);
     static bool t = false;

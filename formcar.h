@@ -65,7 +65,7 @@ private:
     int g_acc_distance2  = 0;
     int g_cruise         = 0;
     int g_dimming        = 1;
-    int  g_external_temp = 0;
+    int g_external_temp  = 0;
     bool g_turn_l        = false;
     bool g_turn_r        = false;
     bool g_turn_flag     = false;
@@ -79,6 +79,8 @@ private:
     bool g_acc_standby   = true;
     bool g_speed_warning = false;
     bool g_alarm         = false;
+    bool g_dpf_full      = false;
+    bool g_dpf_regen     = false;
 
 };
 

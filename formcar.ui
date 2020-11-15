@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1015</width>
-    <height>425</height>
+    <height>391</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -838,12 +838,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>98</x>
-     <y>330</y>
+     <x>109</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
-     <x>277</x>
-     <y>301</y>
+     <x>348</x>
+     <y>293</y>
     </hint>
    </hints>
   </connection>
@@ -854,12 +854,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
-     <y>301</y>
+     <x>348</x>
+     <y>293</y>
     </hint>
     <hint type="destinationlabel">
-     <x>98</x>
-     <y>330</y>
+     <x>109</x>
+     <y>322</y>
     </hint>
    </hints>
   </connection>
@@ -870,12 +870,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
-     <y>241</y>
+     <x>348</x>
+     <y>233</y>
     </hint>
     <hint type="destinationlabel">
-     <x>98</x>
-     <y>270</y>
+     <x>109</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
@@ -886,12 +886,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>553</x>
-     <y>301</y>
+     <x>694</x>
+     <y>293</y>
     </hint>
     <hint type="destinationlabel">
-     <x>554</x>
-     <y>330</y>
+     <x>695</x>
+     <y>322</y>
     </hint>
    </hints>
   </connection>
@@ -902,12 +902,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>554</x>
-     <y>330</y>
+     <x>695</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
-     <x>553</x>
-     <y>301</y>
+     <x>694</x>
+     <y>293</y>
     </hint>
    </hints>
   </connection>
@@ -918,12 +918,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>98</x>
-     <y>270</y>
+     <x>109</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>277</x>
-     <y>241</y>
+     <x>348</x>
+     <y>233</y>
     </hint>
    </hints>
   </connection>
@@ -934,12 +934,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>554</x>
-     <y>270</y>
+     <x>695</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>553</x>
-     <y>241</y>
+     <x>694</x>
+     <y>233</y>
     </hint>
    </hints>
   </connection>
@@ -950,12 +950,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>553</x>
-     <y>241</y>
+     <x>694</x>
+     <y>233</y>
     </hint>
     <hint type="destinationlabel">
-     <x>554</x>
-     <y>270</y>
+     <x>695</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
@@ -966,12 +966,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>735</x>
-     <y>287</y>
+     <x>876</x>
+     <y>279</y>
     </hint>
     <hint type="destinationlabel">
-     <x>736</x>
-     <y>323</y>
+     <x>877</x>
+     <y>315</y>
     </hint>
    </hints>
   </connection>
@@ -982,12 +982,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
-     <y>323</y>
+     <x>877</x>
+     <y>315</y>
     </hint>
     <hint type="destinationlabel">
-     <x>735</x>
-     <y>287</y>
+     <x>876</x>
+     <y>279</y>
     </hint>
    </hints>
   </connection>
@@ -998,12 +998,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>735</x>
-     <y>369</y>
+     <x>876</x>
+     <y>361</y>
     </hint>
     <hint type="destinationlabel">
-     <x>736</x>
-     <y>421</y>
+     <x>877</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -1014,12 +1014,44 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
-     <y>421</y>
+     <x>877</x>
+     <y>413</y>
     </hint>
     <hint type="destinationlabel">
-     <x>735</x>
-     <y>369</y>
+     <x>876</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dpfRegen</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_dpfFull</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>357</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>368</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dpfFull</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_dpfRegen</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>368</y>
     </hint>
    </hints>
   </connection>

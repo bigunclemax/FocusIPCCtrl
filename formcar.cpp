@@ -96,6 +96,11 @@ void FormCar::setupSimulator() {
     addThread([&] {
         fakeExternalTemp(static_cast<CanController*>(controller.get()), g_external_temp);
     });
+
+    /* DPF Manager */
+    addThread([&] {
+        dpfStatus(static_cast<CanController*>(controller.get()), g_dpf_full, g_dpf_regen);
+    });
 }
 
 void FormCar::setupGui() {
@@ -189,6 +194,14 @@ void FormCar::setupGui() {
     /* External temperature */
     connect(ui->spinBox_externalTemp, QOverload<int>::of(&QSpinBox::valueChanged),
             [this](int i) { g_external_temp = i; });
+
+    /* DPF Full */
+    connect(ui->pushButton_dpfFull, QOverload<bool>::of(&QPushButton::toggled),
+        [this](bool toggled) { g_dpf_full = toggled; });
+
+    /* DPF Regen */
+    connect(ui->pushButton_dpfRegen, QOverload<bool>::of(&QPushButton::toggled),
+        [this](bool toggled) { g_dpf_regen = toggled; });
 }
 
 void FormCar::start() {
