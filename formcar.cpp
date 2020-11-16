@@ -9,9 +9,14 @@ FormCar::FormCar(std::unique_ptr<CanController> controller, QWidget *parent):
         ui(new Ui::FormCar),
         controller(std::move(controller))
 {
+    m_sym_init_t = std::make_unique<IPCthread>(0);
+    m_sym_init_t->registerCallback([&] {
+        setupSimulator();
+        start();
+    });
+    m_sym_init_t->start();
+
     setupGui();
-    setupSimulator();
-    start();
 }
 
 FormCar::~FormCar()

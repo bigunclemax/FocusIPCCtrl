@@ -15,10 +15,10 @@ class IPCthread : public QThread{
     Q_OBJECT
 public:
     void run() override {
-        while (!isInterruptionRequested()) {
+        do {
             laterCB();
             usleep(interval);
-        }
+        } while (!isInterruptionRequested() && interval);
     }
 
     template <typename F, typename... Args>
@@ -56,6 +56,7 @@ private:
 
     std::unique_ptr<CanController> controller;
     std::vector<std::unique_ptr<IPCthread>> m_threads;
+    std::unique_ptr<IPCthread> m_sym_init_t;
 
     int g_rpm            = 0;
     int g_speed          = 0;
