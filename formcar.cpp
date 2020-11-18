@@ -5,7 +5,7 @@
 #include "can_sym.h"
 
 FormCar::FormCar(std::unique_ptr<CanController> controller, QWidget *parent):
-        QWidget(parent),
+        QMainWindow(parent),
         ui(new Ui::FormCar),
         controller(std::move(controller))
 {

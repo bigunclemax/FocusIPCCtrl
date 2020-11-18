@@ -1,6 +1,7 @@
 #ifndef FORMCAR_H
 #define FORMCAR_H
 
+#include <QMainWindow>
 #include <QWidget>
 #include <QThread>
 #include <memory>
@@ -34,7 +35,7 @@ private:
 };
 
 
-class FormCar : public QWidget
+class FormCar : public QMainWindow
 {
 	Q_OBJECT
 
