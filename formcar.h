@@ -83,6 +83,11 @@ private:
     bool g_alarm         = false;
     bool g_dpf_full      = false;
     bool g_dpf_regen     = false;
+    bool g_batt_fail     = false;
+    bool g_oil_fail      = false;
+    bool g_engine_fail   = false;
+    bool g_airbag_fail   = false;
+    bool g_brake         = false;
 
 };
 

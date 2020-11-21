@@ -207,6 +207,26 @@ void FormCar::setupGui() {
     /* DPF Regen */
     connect(ui->pushButton_dpfRegen, QOverload<bool>::of(&QPushButton::toggled),
         [this](bool toggled) { g_dpf_regen = toggled; });
+
+    /* Battery status */
+    connect(ui->checkBox_battery, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_batt_fail = toggled; });
+
+    /* Oil status */
+    connect(ui->checkBox_oil, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_batt_fail = toggled; });
+
+    /* Engine status */
+    connect(ui->checkBox_engine, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_batt_fail = toggled; });
+
+    /* Brake status */
+    connect(ui->checkBox_brake, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_brake = toggled; });
+
+    /* Airbag status */
+    connect(ui->checkBox_brake, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_airbag_fail = toggled; });
 }
 
 void FormCar::start() {
