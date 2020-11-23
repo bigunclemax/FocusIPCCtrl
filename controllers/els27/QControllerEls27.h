@@ -65,12 +65,13 @@ public:
     QControllerEls27(QControllerEls27 const &) = delete;
 
     int init() override { return 0; };
-    int set_ecu_address(unsigned ecu_address) override;
-    int set_protocol(CAN_PROTO protocol) override;
     int send_data(std::vector<uint8_t> &data) override;
     int transaction(unsigned ecu_address, std::vector<uint8_t> &data) override;
-
+    void set_logger(CanLogger *logger) override;
+    void remove_logger() override;
 private:
+    int set_protocol(CAN_PROTO protocol) override;
+    int set_ecu_address(unsigned ecu_address) override;
     int control_msg(const std::string &req);
     inline static void hex2ascii(const uint8_t* bin, unsigned int binsz, char* result)
     {
@@ -83,7 +84,9 @@ private:
         }
     };
 
-    SerialHandler comPort;
+    SerialHandler   comPort;
+    std::mutex      mutex;
+    CanLogger*      m_logger;
 };
 
 #endif //GUI_QCONTROLLERELS27_H

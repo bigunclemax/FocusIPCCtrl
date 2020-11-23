@@ -9,11 +9,7 @@
 #include "controllers/CanController.h"
 #include <vector>
 
-std::mutex m_mutex;
-
 void fakeFuel(CanController *controller, uint16_t fuel) {
-
-    const std::lock_guard<std::mutex> lock(m_mutex);
 
     fuel = 0xf00 - (0x2a + fuel*235/50);
 
@@ -25,8 +21,6 @@ void fakeFuel(CanController *controller, uint16_t fuel) {
 }
 
 void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed, bool speed_warning) {
-
-    const std::lock_guard<std::mutex> lock(m_mutex);
 
     uint8_t warning = (speed_warning) ? 0xdd : 0xc0;
     rpm /= 2;
@@ -43,8 +37,6 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
 void fakeIgnitionMiscellaneous(CanController *controller, uint8_t g_drv_door, uint8_t g_psg_door, uint8_t g_rdrv_door, uint8_t g_rpsg_door, uint8_t g_hood,
                        uint8_t g_boot, uint8_t g_acc_status, uint8_t g_acc_standby) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
-
     uint8_t acc = (g_acc_status) ? 0x67 : 0x00;
     if (!g_acc_standby)
         acc = 0x07;
@@ -55,8 +47,6 @@ void fakeIgnitionMiscellaneous(CanController *controller, uint8_t g_drv_door, ui
 
 void fakeEngineTemp(CanController *controller, uint8_t temp) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
-
     temp += 60; //C
 
     std::vector<uint8_t> data = { 0xe0, 0x00, 0x38, 0x40, 0x00, 0xe0, 0x69, temp};
@@ -65,7 +55,6 @@ void fakeEngineTemp(CanController *controller, uint8_t temp) {
 
 void fakeTurn(CanController *controller, bool left, bool right, uint16_t cruise_speed) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<uint8_t>  data = { 0x82, static_cast<unsigned char>(0x83u | (right << 3u) | (left << 2u)),
                                   0x00, 0x02, 0x80, static_cast<unsigned char>((cruise_speed * 20u/11) & 0xFFu), 0x00, 0x00 };
     controller->transaction(0x03A, data);
@@ -73,7 +62,6 @@ void fakeTurn(CanController *controller, bool left, bool right, uint16_t cruise_
 
 void accSimulateDistance(CanController* controller, bool accStatus, bool accStandby) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
     if (accStatus && !accStandby) {
         std::vector<uint8_t>  data = { 0x03, 0xd2, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00 };
         controller->transaction(0x020, data);
@@ -82,7 +70,6 @@ void accSimulateDistance(CanController* controller, bool accStatus, bool accStan
 
 void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accDistance2, bool accStatus, bool accStandby) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
     if (accStatus && accStandby) {
         accDistance = accDistance * 0x10;
         std::vector<uint8_t>  data = { 0x00, 0x9C, accDistance, 0x80, 0x11, 0xF4, 0xE8, 0x54 };
@@ -97,7 +84,6 @@ void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accD
 
 void playAlarm(CanController* controller, bool alarm) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
     if (alarm) {
         std::vector<uint8_t>  data = { 0x00, 0xC0, 0x80, 0x21, 0xC0, 0x80, 0x00, 0x00 };
         controller->transaction(0x300, data);
@@ -106,15 +92,12 @@ void playAlarm(CanController* controller, bool alarm) {
 
 void changeDimming(CanController* controller, int dimming) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
     uint8_t dimLevel = (dimming) ? 0x05 : 0x06;
     std::vector<uint8_t>  data = { 0x98, 0x00, 0x1, 0x00, dimLevel, 0x00, 0x00, 0x00 };
     controller->transaction(0x290, data);
 }
 
 void fakeExternalTemp(CanController* controller, uint16_t temp) {
-
-    const std::lock_guard<std::mutex> lock(m_mutex);
 
     temp = 0x0160 + (temp + 40) * 4;
 
@@ -129,7 +112,6 @@ void fakeExternalTemp(CanController* controller, uint16_t temp) {
 
 void dpfStatus(CanController* controller, bool full, bool regen) {
 
-    const std::lock_guard<std::mutex> lock(m_mutex);
     uint8_t dpfStatus = (full) ? 0x88 : 0x66;
     if (!full && !regen)
         dpfStatus = 0x00;
@@ -138,7 +120,6 @@ void dpfStatus(CanController* controller, bool full, bool regen) {
 }
 
 void resetDash(CanController *controller) {
-    const std::lock_guard<std::mutex> lock(m_mutex);
     static bool t = false;
     std::vector<uint8_t>  data = { 0x02, 0x11, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
     controller->transaction(0x720, data);

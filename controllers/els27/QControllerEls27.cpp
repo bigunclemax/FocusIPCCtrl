@@ -358,9 +358,18 @@ QControllerEls27::QControllerEls27(sControllerSettings init_settings)
     : comPort(std::move(init_settings))
 {}
 
+void QControllerEls27::set_logger(CanLogger *logger) {
+    const std::lock_guard<std::mutex> lock(mutex);
+    m_logger = logger;
+}
+
+void QControllerEls27::remove_logger() {
+    const std::lock_guard<std::mutex> lock(mutex);
+    m_logger = nullptr;
+}
+
 int QControllerEls27::control_msg(const std::string &req) {
-    comPort.transaction(3000, req + '\r');
-    return 0; //TODO: add return code
+    return comPort.transaction(3000, req + '\r');
 }
 
 int QControllerEls27::send_data(std::vector<uint8_t> &data) {
@@ -369,8 +378,7 @@ int QControllerEls27::send_data(std::vector<uint8_t> &data) {
     io_buff.resize(tx_size * 2 + 1);
     io_buff[tx_size * 2] = '\r';
     hex2ascii(data.data(), tx_size, io_buff.data());
-    comPort.transaction(3000, io_buff);
-    return 0; //TODO: add return code
+    return comPort.transaction(3000, io_buff);
 }
 
 int QControllerEls27::set_ecu_address(unsigned int ecu_address) {
@@ -389,12 +397,24 @@ int QControllerEls27::set_protocol(CanController::CAN_PROTO protocol) {
 
 int QControllerEls27::transaction(unsigned int ecu_address, std::vector<uint8_t> &data) {
 
-    auto res = set_ecu_address(ecu_address);
-    res = send_data(data);
+    const std::lock_guard<std::mutex> lock(mutex); //TODO: remove me if you want mess :D
+    if(set_ecu_address(ecu_address)) {
+        std::cerr << "Set ECU address 0x" << std::hex << ecu_address << " error" << std::endl;
+        return -1;
+    }
+
+    if(send_data(data)) {
+        std::cerr << "Send data to ECU 0x" << std::hex << ecu_address << " error" << std::endl;
+        return -1;
+    }
+
+    if(m_logger) {
+        std::stringstream ss;
+        ss << "0x" << std::hex << std::setfill('0') << std::setw(3) << ecu_address << ": " << std::setw(2);
+        for(auto d : data) {ss << d;}
+        ss << std::endl;
+        m_logger->write(ss.str().c_str());
+    }
 
     return 0;
 }
-
-//if(ecu_address == 0x3a || ecu_address == 0x80) {
-//printf("0x%03x ", ecu_address);for(auto d : data) {printf("0x%02x ", d);}printf("\n");
-//}

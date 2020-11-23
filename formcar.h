@@ -34,10 +34,14 @@ private:
     unsigned long interval;
 };
 
-
-class FormCar : public QMainWindow
+class FormCar : public QMainWindow, public CanLogger
 {
 	Q_OBJECT
+signals:
+    void signalLog(QString str);
+
+private slots:
+    void slotLog(const QString &str);
 
 public:
 	explicit FormCar(std::unique_ptr<CanController> controller, QWidget *parent = nullptr);
@@ -54,6 +58,8 @@ private:
 	void addThread( std::function<void(void)> f, unsigned long interval = 250000);
 	void startThreads();
     void stopThreads();
+
+    void write(const char *msg) override;
 
     std::unique_ptr<CanController> controller;
     std::vector<std::unique_ptr<IPCthread>> m_threads;

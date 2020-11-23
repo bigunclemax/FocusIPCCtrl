@@ -9,6 +9,7 @@ FormCar::FormCar(std::unique_ptr<CanController> controller, QWidget *parent):
         ui(new Ui::FormCar),
         controller(std::move(controller))
 {
+    connect(this, &FormCar::signalLog, this, &FormCar::slotLog, Qt::QueuedConnection);
     m_sym_init_t = std::make_unique<IPCthread>(0);
     m_sym_init_t->registerCallback([&] {
         setupSimulator();
@@ -108,9 +109,30 @@ void FormCar::setupSimulator() {
     });
 }
 
+void FormCar::slotLog(const QString &str) {
+    ui->plainTextEdit_log->insertPlainText(str);
+}
+
+void FormCar::write(const char *msg) {
+    emit signalLog(QString(msg));
+}
+
 void FormCar::setupGui() {
 
     ui->setupUi(this);
+    ui->plainTextEdit_log->setVisible(false);
+
+    /* Show logs */
+    connect(ui->actionShow_log, QOverload<bool>::of(&QAction::toggled),
+            [this](bool showLog)
+            {
+                ui->plainTextEdit_log->setVisible(showLog);
+                if(showLog) {
+                    controller->set_logger(this);
+                } else {
+                    controller->remove_logger();
+                }
+            });
 
     /* Ignition on/off */
     connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),

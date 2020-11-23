@@ -11,6 +11,11 @@
 
 constexpr unsigned CAN_frame_sz = 8;
 
+class CanLogger {
+public:
+    virtual void write(const char *msg) = 0;
+};
+
 class CanController {
 public:
     typedef enum {
@@ -24,6 +29,8 @@ public:
     virtual int set_protocol(CAN_PROTO protocol) =0;
     virtual int send_data(std::vector<uint8_t> &data) =0;
     virtual int transaction(unsigned ecu_address, std::vector<uint8_t> &data) =0;
+    virtual void set_logger(CanLogger *logger) {};
+    virtual void remove_logger() {};
 };
 
 #endif //IPCFLASHER_CANCONTROLLER_H
