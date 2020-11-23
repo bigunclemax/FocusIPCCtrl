@@ -411,7 +411,7 @@ int QControllerEls27::transaction(unsigned int ecu_address, std::vector<uint8_t>
     if(m_logger) {
         std::stringstream ss;
         ss << "0x" << std::hex << std::setfill('0') << std::setw(3) << ecu_address << ": " << std::setw(2);
-        for(auto d : data) {ss << d;}
+        for(auto d : data) {ss << std::setfill('0') << std::setw(2) << (int)d;}
         ss << std::endl;
         m_logger->write(ss.str().c_str());
     }
