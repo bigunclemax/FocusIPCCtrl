@@ -94,6 +94,10 @@ private:
     bool g_engine_fail   = false;
     bool g_airbag_fail   = false;
     bool g_brake         = false;
+    bool g_rear_fog      = false;
+    bool g_high_beam     = false;
+    bool g_head_lights   = false;
+
     bool g_debug         = false;
 
 };

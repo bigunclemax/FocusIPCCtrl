@@ -51,7 +51,7 @@ void FormCar::setupSimulator() {
     /* ignition and miscellaneus */
     addThread([&] {
         fakeIgnitionMiscellaneous(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot,
-                                  g_acc_status, g_acc_standby);
+                                  g_acc_status, g_acc_standby, g_head_lights);
     });
 
     /* speed & rpm */
@@ -107,6 +107,11 @@ void FormCar::setupSimulator() {
     /* DPF Manager */
     addThread([&] {
         dpfStatus(static_cast<CanController*>(controller.get()), g_dpf_full, g_dpf_regen);
+    });
+
+    /* High beam, rear fog, Average\instant fuel, shift advice */
+    addThread([&] {
+        package_1a8(static_cast<CanController *>(controller.get()), g_high_beam, g_rear_fog, 0, 0, 0);
     });
 
     /* Average\instant fuel, shift advice */
