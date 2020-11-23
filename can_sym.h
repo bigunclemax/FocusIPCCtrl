@@ -138,9 +138,10 @@ void package_1e0(CanController* controller, uint8_t immoStatus) {
     controller->transaction(0x1e0, data);
 }
 
-void package_240(CanController *controller, bool brakeStatus) {
+void package_240(CanController *controller, bool brakeApplied) {
 
-    std::vector<uint8_t> data = { 0x00, 0x02, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00 };
+    std::vector<uint8_t> data = { 0x00, 0x02, 0x00, static_cast<unsigned char>(0x40u | (brakeApplied << 7u)),
+                                  0x00, 0x00, 0x00, 0x00 };
     controller->transaction(0x240, data);
 }
 

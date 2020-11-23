@@ -307,11 +307,11 @@ void FormCar::setupGui() {
             [this](bool toggled) { g_engine_fail = toggled; });
 
     /* Brake status */
-    connect(ui->checkBox_brake, QOverload<bool>::of(&QCheckBox::toggled),
+    connect(ui->pushButton_parkBrake, QOverload<bool>::of(&QCheckBox::toggled),
             [this](bool toggled) { g_brake = toggled; });
 
     /* Airbag status */
-    connect(ui->checkBox_brake, QOverload<bool>::of(&QCheckBox::toggled),
+    connect(ui->checkBox_airbag, QOverload<bool>::of(&QCheckBox::toggled),
             [this](bool toggled) { g_airbag_fail = toggled; });
 
     /* High beam */
