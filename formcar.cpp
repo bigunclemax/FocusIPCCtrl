@@ -94,9 +94,9 @@ void FormCar::setupSimulator() {
         playAlarm(static_cast<CanController*>(controller.get()), g_alarm);
     });
 
-    /* LCD Dimming */
+    /* Brake status, lamps status, LCD Dimming(???) */
     addThread([&] {
-        changeDimming(static_cast<CanController*>(controller.get()), g_dimming);
+        package_290(static_cast<CanController *>(controller.get()), g_dimming, false);
     });
 
     /* External temperature */
@@ -107,6 +107,36 @@ void FormCar::setupSimulator() {
     /* DPF Manager */
     addThread([&] {
         dpfStatus(static_cast<CanController*>(controller.get()), g_dpf_full, g_dpf_regen);
+    });
+
+    /* Battery status */
+    addThread([&] {
+        package_508(static_cast<CanController *>(controller.get()), g_batt_fail);
+    });
+
+    /* Engine status */
+    addThread([&] {
+        package_250(static_cast<CanController*>(controller.get()), g_oil_fail, g_engine_fail);
+    });
+
+    /* Park brake */
+    addThread([&] {
+        package_240(static_cast<CanController*>(controller.get()), g_brake);
+    });
+
+    /* Airbag status */
+    addThread([&] {
+        package_040(static_cast<CanController *>(controller.get()), 0, 0, 0);
+    });
+
+    /* Immobilizer status */
+    addThread([&] {
+        package_1e0(static_cast<CanController *>(controller.get()), 0);
+    });
+
+    /* Hill assist status */
+    addThread([&] {
+        package_1b0(static_cast<CanController *>(controller.get()), 0);
     });
 
     /* High beam, rear fog, Average\instant fuel, shift advice */
@@ -270,11 +300,11 @@ void FormCar::setupGui() {
 
     /* Oil status */
     connect(ui->checkBox_oil, QOverload<bool>::of(&QCheckBox::toggled),
-            [this](bool toggled) { g_batt_fail = toggled; });
+            [this](bool toggled) { g_oil_fail = toggled; });
 
     /* Engine status */
     connect(ui->checkBox_engine, QOverload<bool>::of(&QCheckBox::toggled),
-            [this](bool toggled) { g_batt_fail = toggled; });
+            [this](bool toggled) { g_engine_fail = toggled; });
 
     /* Brake status */
     connect(ui->checkBox_brake, QOverload<bool>::of(&QCheckBox::toggled),
