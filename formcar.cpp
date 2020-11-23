@@ -1,5 +1,6 @@
 #include "formcar.h"
-
+#include <QRegExpValidator>
+#include <QRegExp>
 #include <utility>
 #include "ui_formcar.h"
 #include "can_sym.h"
@@ -107,6 +108,30 @@ void FormCar::setupSimulator() {
     addThread([&] {
         dpfStatus(static_cast<CanController*>(controller.get()), g_dpf_full, g_dpf_regen);
     });
+
+    /* Average\instant fuel, shift advice */
+    addThread([&] {
+        if (g_debug) {
+            bool bStatus = false;
+            auto id = ui->lineEdit_debugID->text().toUInt(&bStatus,16);
+            if(!bStatus) return;
+            auto str_data = ui->lineEdit_debugData->text();
+            if(str_data.length() != 16) return;
+            auto in_str = str_data.toStdString();
+            auto asciiHexToInt = [](uint8_t hexchar)->int {return (hexchar >= 'A') ? (hexchar - 'A' + 10) : (hexchar - '0');};
+            std::vector<uint8_t> out_hex(8);
+            out_hex[0] = asciiHexToInt(in_str[0]) << 4 | asciiHexToInt(in_str[1]);
+            out_hex[1] = asciiHexToInt(in_str[2]) << 4 | asciiHexToInt(in_str[3]);
+            out_hex[2] = asciiHexToInt(in_str[4]) << 4 | asciiHexToInt(in_str[5]);
+            out_hex[3] = asciiHexToInt(in_str[6]) << 4 | asciiHexToInt(in_str[7]);
+            out_hex[4] = asciiHexToInt(in_str[8]) << 4 | asciiHexToInt(in_str[9]);
+            out_hex[5] = asciiHexToInt(in_str[10]) << 4 | asciiHexToInt(in_str[11]);
+            out_hex[6] = asciiHexToInt(in_str[12]) << 4 | asciiHexToInt(in_str[13]);
+            out_hex[7] = asciiHexToInt(in_str[14]) << 4 | asciiHexToInt(in_str[15]);
+
+            package_debug(static_cast<CanController *>(controller.get()), id, out_hex);
+        }
+    });
 }
 
 void FormCar::slotLog(const QString &str) {
@@ -120,8 +145,12 @@ void FormCar::write(const char *msg) {
 void FormCar::setupGui() {
 
     ui->setupUi(this);
-    ui->plainTextEdit_log->setVisible(false);
 
+    auto *v = new QRegExpValidator(QRegExp("[a-fA-F0-9]*"), this);
+    ui->lineEdit_debugID->setValidator(v);
+    ui->lineEdit_debugData->setValidator(v);
+
+    ui->plainTextEdit_log->setVisible(false);
     /* Show logs */
     connect(ui->actionShow_log, QOverload<bool>::of(&QAction::toggled),
             [this](bool showLog)
@@ -249,6 +278,22 @@ void FormCar::setupGui() {
     /* Airbag status */
     connect(ui->checkBox_brake, QOverload<bool>::of(&QCheckBox::toggled),
             [this](bool toggled) { g_airbag_fail = toggled; });
+
+    /* High beam */
+    connect(ui->pushButton_HighBeam, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool toggled) { g_high_beam = toggled; });
+
+    /* Rear fog */
+    connect(ui->pushButton_RearFogLights, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool toggled) { g_rear_fog = toggled; });
+
+    /* Low beam */
+    connect(ui->pushButton_HeadLights, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool toggled) { g_head_lights = toggled; });
+
+    /* Debug */
+    connect(ui->pushButton_debugSend, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool toggled) { g_debug = toggled; });
 }
 
 void FormCar::start() {

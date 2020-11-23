@@ -94,6 +94,7 @@ private:
     bool g_engine_fail   = false;
     bool g_airbag_fail   = false;
     bool g_brake         = false;
+    bool g_debug         = false;
 
 };
 

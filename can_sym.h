@@ -119,6 +119,11 @@ void dpfStatus(CanController* controller, bool full, bool regen) {
     controller->transaction(0x083, data);
 }
 
+void package_debug(CanController *controller, uint32_t ID, std::vector<uint8_t> &data) {
+
+    controller->transaction(ID, data);
+}
+
 void resetDash(CanController *controller) {
     static bool t = false;
     std::vector<uint8_t>  data = { 0x02, 0x11, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
