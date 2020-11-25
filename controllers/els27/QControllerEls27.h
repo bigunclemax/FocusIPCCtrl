@@ -86,7 +86,8 @@ private:
 
     SerialHandler   comPort;
     std::mutex      mutex;
-    CanLogger*      m_logger;
+    CanLogger*      m_logger{};
+    std::atomic<bool> is_logger_set = false;
 };
 
 #endif //GUI_QCONTROLLERELS27_H

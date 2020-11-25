@@ -359,12 +359,12 @@ QControllerEls27::QControllerEls27(sControllerSettings init_settings)
 {}
 
 void QControllerEls27::set_logger(CanLogger *logger) {
-    const std::lock_guard<std::mutex> lock(mutex);
     m_logger = logger;
+    is_logger_set = true;
 }
 
 void QControllerEls27::remove_logger() {
-    const std::lock_guard<std::mutex> lock(mutex);
+    is_logger_set = false;
     m_logger = nullptr;
 }
 
@@ -408,7 +408,7 @@ int QControllerEls27::transaction(unsigned int ecu_address, std::vector<uint8_t>
         return -1;
     }
 
-    if(m_logger) {
+    if(is_logger_set) {
         std::stringstream ss;
         ss << "0x" << std::hex << std::setfill('0') << std::setw(3) << ecu_address << ": " << std::setw(2);
         for(auto d : data) {ss << std::setfill('0') << std::setw(2) << (int)d;}
