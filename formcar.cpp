@@ -96,7 +96,7 @@ void FormCar::setupSimulator() {
 
     /* Brake status, lamps status, LCD Dimming(???) */
     addThread([&] {
-        package_290(static_cast<CanController *>(controller.get()), g_dimming, false);
+        package_290(static_cast<CanController *>(controller.get()), g_dimming);
     });
 
     /* External temperature */
@@ -185,18 +185,34 @@ void FormCar::setupGui() {
     ui->lineEdit_debugID->setValidator(v);
     ui->lineEdit_debugData->setValidator(v);
 
-    ui->plainTextEdit_log->setVisible(false);
-    /* Show logs */
+    /* Log show */
+    ui->plainTextEdit_log->setFont(QFont("monospace"));
+    ui->groupBox_log->setVisible(false);
+
     connect(ui->actionShow_log, QOverload<bool>::of(&QAction::toggled),
             [this](bool showLog)
             {
-                ui->plainTextEdit_log->setVisible(showLog);
-                if(showLog) {
-                    controller->set_logger(this);
-                } else {
-                    controller->remove_logger();
+                ui->groupBox_log->setVisible(showLog);
+                if(!showLog) {
+                    ui->pushButton_logEnable->toggle();
                 }
             });
+
+    /* Log enable */
+    connect(ui->pushButton_logEnable, QOverload<bool>::of(&QPushButton::toggled),[this](bool enableLog)
+    {
+        if(enableLog) {
+            controller->set_logger(this);
+        } else {
+            controller->remove_logger();
+        }
+    });
+
+    /* Log clear */
+    connect(ui->pushButton_logClear, QOverload<bool>::of(&QPushButton::clicked),[this](bool clearLog)
+    {
+        ui->plainTextEdit_log->clear();
+    });
 
     /* Ignition on/off */
     connect(ui->pushButton_Ignition, QOverload<bool>::of(&QPushButton::toggled),

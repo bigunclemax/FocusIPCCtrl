@@ -140,7 +140,7 @@ void package_1e0(CanController* controller, uint8_t immoStatus) {
 
 void package_240(CanController *controller, bool brakeApplied) {
 
-    std::vector<uint8_t> data = { 0x00, 0x02, 0x00, static_cast<unsigned char>(0x40u | (brakeApplied << 7u)),
+    std::vector<uint8_t> data = { 0x00, 0x02, 0x00, static_cast<unsigned char>(0x40u | (brakeApplied << 7u)), //0x80 - with alert
                                   0x00, 0x00, 0x00, 0x00 };
     controller->transaction(0x240, data);
 }
@@ -155,9 +155,8 @@ void package_250(CanController *controller, bool oilStatus, bool engineStatus) {
 //|      |
 //|      |<----------------- lamp errors status
 //|<----------------- ABS status
-void package_290(CanController* controller, int dimming, bool parkBrake) {
+void package_290(CanController *controller, int dimming) {
 
-    
     uint8_t dimLevel = (dimming) ? 0x05 : 0x06;
     std::vector<uint8_t>  data = { 0x98, 0x00, 0x01, 0x00, dimLevel, 0x00, 0x00, 0x00 };
     controller->transaction(0x290, data);
