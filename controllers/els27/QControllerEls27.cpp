@@ -200,7 +200,6 @@ int SerialHandler::_init(QSerialPort& serial) {
 
     std::cerr << "Els baud rate: " << serial.baudRate() << std::endl;
 
-    serial_transaction(serial, "\r");
     serial_transaction(serial, "ATE1\r");   //echo off
     serial_transaction(serial, "ATL0\r");   //linefeeds off
     serial_transaction(serial, "ATS0\r");   //spaces off
@@ -211,7 +210,9 @@ int SerialHandler::_init(QSerialPort& serial) {
     serial_transaction(serial, "ATST01\r"); //Set timeout to hh(13) x 4 ms
     serial_transaction(serial, "ATR0\r");   //Responses on
 
-    serial_transaction(serial, "STI\r");    //Get els description
+    if (serial_transaction(serial, "STI\r").second.find("STN1170") == std::string::npos) {
+        m_isElm327 = true;
+    }
 
     return 0;
 }
@@ -235,7 +236,7 @@ int SerialHandler::check_baudrate(QSerialPort& serial, uint32_t baud) {
         return -1;
     }
 
-    if (r.second.find("ELM327 v1.3a") == std::string::npos) {
+    if (r.second.find("ELM327 v1.") == std::string::npos) {
         return -1;
     }
 
@@ -356,7 +357,7 @@ int SerialHandler::maximize_baudrate(QSerialPort &serial) {
 
 QControllerEls27::QControllerEls27(sControllerSettings init_settings)
     : comPort(std::move(init_settings))
-{}
+{   control_msg(""); }
 
 void QControllerEls27::set_logger(CanLogger *logger) {
     m_logger = logger;
@@ -389,8 +390,15 @@ int QControllerEls27::set_ecu_address(unsigned int ecu_address) {
 }
 
 int QControllerEls27::set_protocol(CanController::CAN_PROTO protocol) {
-    if(CAN_MS == protocol)
-        control_msg("STP53");   //ISO 15765, 11-bit Tx, 125kbps, DLC=8
+
+    const std::lock_guard<std::mutex> lock(mutex);
+    if(CAN_MS == protocol) {
+        if(comPort.isElm327()) {
+            control_msg("ATSPB");   // User1 CAN (11* bit ID, 125* kbaud
+        } else {
+            control_msg("STP53");   //ISO 15765, 11-bit Tx, 125kbps, DLC=8
+        }
+    }
 
     return 0;
 }

@@ -27,6 +27,7 @@ public:
     ~SerialHandler() override;
 
     int transaction(int waitTimeout, const std::string &request);
+    [[nodiscard]] bool isElm327() const { return m_isElm327; }
 
 private:
     void run() override;
@@ -44,7 +45,7 @@ private:
     static const int        baud_arr_sz;
 
     sControllerSettings     m_init_settings;
-
+    bool                    m_isElm327 = false;
     QString     m_portName;
     std::string m_request;
     int m_waitTimeout = 0;

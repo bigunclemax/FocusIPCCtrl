@@ -19,6 +19,7 @@ public:
 
     enum enControllerType {
         els27  =0,
+        elm327 =1
     };
 
     inline const char* ToString(enControllerType v)
@@ -26,11 +27,13 @@ public:
         switch (v)
         {
             case els27:   return "els27";
+            case elm327:  return "elm327";
             default:      return "";
         }
     }
 
     struct settings {
+        enControllerType type;
         std::string port_name;
         int         baudrate{};
         bool        maximize{};
@@ -38,8 +41,7 @@ public:
     };
 
     explicit Dialog(QWidget *parent = nullptr);
-    settings getSettings(enControllerType type) const { return m_settings; };
-    enControllerType getControllerType() const { return els27; };
+    [[nodiscard]] settings getSettings() const { return m_settings; };
 
 private:
     Ui::Dialog *ui;

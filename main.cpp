@@ -16,18 +16,11 @@ int main(int argc, char *argv[])
 
     QObject::connect(init_dialog.get(), &Dialog::btnOk_click, [&]{
 
-        auto type = init_dialog->getControllerType();
-        if(Dialog::els27 == type) {
-            auto settings_from_dialog = init_dialog->getSettings(type);
-            /* pretty ugly part */
-            sControllerSettings controller_settings { .port_name = settings_from_dialog.port_name,
-                                                             .baud = static_cast<uint32_t>(!settings_from_dialog.autodetect ? settings_from_dialog.baudrate : 0),
-                                                             .maximize = settings_from_dialog.maximize };
-            controller = std::make_unique<QControllerEls27>(controller_settings);
-        } else {
-            return;
-        }
-
+        auto settings_from_dialog = init_dialog->getSettings();
+        sControllerSettings controller_settings { .port_name = settings_from_dialog.port_name,
+                                                  .baud = static_cast<uint32_t>(!settings_from_dialog.autodetect ? settings_from_dialog.baudrate : 0),
+                                                  .maximize = settings_from_dialog.maximize };
+        controller = std::make_unique<QControllerEls27>(controller_settings);
 
         form = std::make_unique<FormCar>(std::move(controller));
         form->setWindowTitle("Ford Focus MK3 IPC Simulator");
