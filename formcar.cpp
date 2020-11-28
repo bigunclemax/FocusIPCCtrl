@@ -50,8 +50,9 @@ void FormCar::setupSimulator() {
 
     /* ignition and miscellaneus */
     addThread([&] {
-        fakeIgnitionMiscellaneous(static_cast<CanController*>(controller.get()), g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot,
-                                  g_acc_status, g_acc_standby, g_head_lights);
+        package_080(static_cast<CanController *>(controller.get()),
+                    g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot, g_head_lights,
+                    g_cruise && g_cruise_on, g_cruise && g_cruise_standby, g_acc_on);
     });
 
     /* speed & rpm */
@@ -72,21 +73,24 @@ void FormCar::setupSimulator() {
     /* Turns */
     addThread([&] {
         if(g_turn_flag)
-            fakeTurn(static_cast<CanController*>(controller.get()), g_turn_l, g_turn_r, g_cruise);
+            package_03a(static_cast<CanController *>(controller.get()), g_turn_l || g_hazard,
+                        g_turn_r || g_hazard, g_cruise_speed);
         else
-            fakeTurn(static_cast<CanController*>(controller.get()), false, false, g_cruise);
+            package_03a(static_cast<CanController *>(controller.get()), false, false, g_cruise_speed);
 
         g_turn_flag = !g_turn_flag;
     });
 
     /* ACC Set Distance */
     addThread([&] {
-        accSetDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_distance2, g_acc_status, g_acc_standby);
+        accSetDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_distance2,
+                       g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* ACC Simulate Distance */
     addThread([&] {
-        accSimulateDistance(static_cast<CanController*>(controller.get()), g_acc_status, g_acc_standby);
+        accSimulateDistance(static_cast<CanController*>(controller.get()),
+                            g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* Play Alarm Sound */
@@ -136,7 +140,8 @@ void FormCar::setupSimulator() {
 
     /* Hill assist status */
     addThread([&] {
-        package_1b0(static_cast<CanController *>(controller.get()), 0);
+        package_1b0(static_cast<CanController *>(controller.get()), g_cruise && g_limit_on,
+                    g_cruise && g_cruise_standby, 0);
     });
 
     /* High beam, rear fog, Average\instant fuel, shift advice */
@@ -184,6 +189,17 @@ void FormCar::setupGui() {
     auto *v = new QRegExpValidator(QRegExp("[a-fA-F0-9]*"), this);
     ui->lineEdit_debugID->setValidator(v);
     ui->lineEdit_debugData->setValidator(v);
+
+    /* Debug */
+    ui->groupBox_debug->setVisible(false);
+    connect(ui->actionShow_dbg, QOverload<bool>::of(&QAction::toggled),
+            [this](bool showDebug)
+            {
+                ui->groupBox_debug->setVisible(showDebug);
+                if(!showDebug) {
+                    ui->pushButton_debugSend->setChecked(false);
+                }
+            });
 
     /* Log show */
     ui->plainTextEdit_log->setFont(QFont("monospace"));
@@ -246,6 +262,10 @@ void FormCar::setupGui() {
     connect(ui->pushButton_RightTurn, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool toggled){ g_turn_r = toggled; });
 
+    /* Hazard lights */
+    connect(ui->pushButton_hazardLights, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool toggled){ g_hazard = toggled; });
+
     /* Driver Door */
     connect(ui->pushButton_lfDoorButton, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool toggled) { g_drv_door = toggled; });
@@ -270,13 +290,22 @@ void FormCar::setupGui() {
     connect(ui->pushButton_bootButton, QOverload<bool>::of(&QPushButton::toggled),
             [this](bool toggled) { g_boot = toggled; });
 
-    /* ACC Status */
-    connect(ui->pushButton_accStatus, QOverload<bool>::of(&QPushButton::toggled),
-            [this](bool toggled) { g_acc_status = toggled; });
+    /* Cruise and limit */
+    connect(ui->pushButton_cruiseEnable, QOverload<bool>::of(&QPushButton::toggled),
+            [this](bool toggled) { g_cruise = toggled; });
 
-    /* ACC Standby */
-    connect(ui->checkBox_accStandby, QOverload<bool>::of(&QCheckBox::toggled),
-            [this](bool toggled) { g_acc_standby = toggled; });
+    connect(ui->checkBox_cruiseStandby, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_cruise_standby = toggled; });
+
+    connect(ui->radioButton_cruise, QOverload<bool>::of(&QRadioButton::toggled),
+            [this](bool toggled) { g_cruise_on = toggled; });
+
+    connect(ui->radioButton_limit, QOverload<bool>::of(&QRadioButton::toggled),
+            [this](bool toggled) { g_limit_on = toggled; });
+
+    /* ACC Status */
+    connect(ui->checkBox_accStatus, QOverload<bool>::of(&QCheckBox::toggled),
+            [this](bool toggled) { g_acc_on = toggled; });
 
     /* ACC Simulate Distance */
     connect(ui->spinBox_accSimulateDistance, QOverload<int>::of(&QSpinBox::valueChanged),
@@ -287,8 +316,8 @@ void FormCar::setupGui() {
             [this](int i) { g_acc_distance = i; });
 
     /* Cruise and limit speed */
-    connect(ui->spinBox_cruise, QOverload<int>::of(&QSpinBox::valueChanged),
-            [this](int i) { g_cruise = i; });
+    connect(ui->spinBox_cruiseSpeed, QOverload<int>::of(&QSpinBox::valueChanged),
+            [this](int i) { g_cruise_speed = i; });
 
     /* Alarm */
     connect(ui->pushButton_alarmSound, QOverload<bool>::of(&QPushButton::toggled),

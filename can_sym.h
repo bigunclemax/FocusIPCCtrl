@@ -36,12 +36,14 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
 
 //63-bit key battery low
 //55-bit low beam
-void fakeIgnitionMiscellaneous(CanController *controller, uint8_t g_drv_door, uint8_t g_psg_door, uint8_t g_rdrv_door,
-                               uint8_t g_rpsg_door, uint8_t g_hood, uint8_t g_boot, uint8_t g_acc_status,
-                               uint8_t g_acc_standby, bool g_head_lights) {
 
-    uint8_t acc = (g_acc_status) ? 0x07 : 0x00;
-    if (g_acc_status && g_acc_standby) acc = 0x67;
+void
+package_080(CanController *controller, bool g_drv_door, bool g_psg_door, bool g_rdrv_door, bool g_rpsg_door,
+            bool g_hood, bool g_boot, bool g_head_lights, bool g_cruise_status, bool g_cruise_standby,
+            bool g_acc_on) {
+
+    uint8_t acc = (g_cruise_status && !g_acc_on) ? 0xa7 : 0x07;
+    if (g_cruise_status && g_cruise_standby) acc = 0x67;
     uint8_t door = (!g_drv_door) | (!g_psg_door << 1u) | (!g_rdrv_door << 2u) | (!g_rpsg_door << 3u) | (!g_boot << 4u) | (!g_hood << 5u);
     std::vector<uint8_t> data = { 0x77, static_cast<unsigned char>((g_head_lights << 7u) | 0x03), 0x07, door, 0xD9, acc, 0x03, 0x82 };
     controller->transaction(0x080, data);
@@ -55,10 +57,21 @@ void fakeEngineTemp(CanController *controller, uint8_t temp) {
     controller->transaction(0x360, data);
 }
 
-void fakeTurn(CanController *controller, bool left, bool right, uint16_t cruise_speed) {
+/// 2 BYTE (turns)
 
+/// 5 BYTE
+//f8 - steering malfunction
+//fe - steering loss
+//80 - ok
+//81 - speed + 133
+
+/// 6 BYTE
+//xx - speed from 0-133 or 134-268
+void package_03a(CanController *controller, bool left, bool right, uint16_t cruise_speed) {
+    //FIXME: cruise formula not accurate, i.e. it fails on 53 km
     std::vector<uint8_t>  data = { 0x82, static_cast<unsigned char>(0x83u | (right << 3u) | (left << 2u)),
-                                  0x00, 0x02, 0x80, static_cast<unsigned char>((cruise_speed * 20u/11) & 0xFFu), 0x00, 0x00 };
+                                  0x00, 0x02, static_cast<unsigned char>(0x80u|(cruise_speed>133)),
+                                  (uint8_t)(cruise_speed * 0x200/268), 0x00, 0x00 };
     controller->transaction(0x03A, data);
 }
 
@@ -125,9 +138,15 @@ void package_1a8(CanController* controller, bool highBeam, bool rearFog, uint8_t
     controller->transaction(0x1a8, data);
 }
 
-void package_1b0(CanController* controller, uint8_t hillAssistStatus) {
+//limit data
+//80-enabled
+//40-standby
+//00-off
+void package_1b0(CanController* controller, bool limitStatus, bool limitStandby, uint8_t hillAssistStatus) {
 
-    std::vector<uint8_t> data = { 0x01, 0x52, 0x27, 0x00, 0x00, 0xc0, 0x80, 0x00 };
+    std::vector<uint8_t> data = { 0x01, 0x52, 0x27, 0x00,
+                                  static_cast<unsigned char>(0x00u | ((limitStatus << 7u) >> limitStandby)),
+                                  0xc0, 0x80, 0x00 };
     controller->transaction(0x1b0, data);
 }
 

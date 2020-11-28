@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1233</width>
-    <height>564</height>
+    <width>1224</width>
+    <height>634</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -30,199 +30,6 @@
     <property name="bottomMargin">
      <number>9</number>
     </property>
-    <item row="2" column="4" rowspan="3">
-     <widget class="QGroupBox" name="accBox">
-      <property name="title">
-       <string>ACC</string>
-      </property>
-      <layout class="QVBoxLayout" name="accLayout">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" name="accMaxDistanceVLayout">
-         <item>
-          <layout class="QHBoxLayout" name="accOnStandbyLayout">
-           <item>
-            <widget class="QPushButton" name="pushButton_accStatus">
-             <property name="text">
-              <string>On / Off</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBox_accStandby">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Standby</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="accMaxDistanceLayout">
-           <item>
-            <widget class="QLabel" name="accMaxDistanceLabel">
-             <property name="text">
-              <string>Set Max Distance</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBox_accSetDistance">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>5</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QSlider" name="horizontalSlider_accSetDistance">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="whatsThis">
-            <string/>
-           </property>
-           <property name="accessibleDescription">
-            <string/>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>5</number>
-           </property>
-           <property name="pageStep">
-            <number>1</number>
-           </property>
-           <property name="value">
-            <number>1</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-           <property name="tickInterval">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="accCurrentDistanceVLayout">
-         <item>
-          <layout class="QHBoxLayout" name="accCurrentDistanceLayout">
-           <item>
-            <widget class="QLabel" name="accCurrentDistanceLabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Set Current Distance</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBox_accSimulateDistance">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>8</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QSlider" name="horizontalSlider_accSimulateDistance">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>8</number>
-           </property>
-           <property name="pageStep">
-            <number>1</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-           <property name="tickInterval">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="1" column="3" rowspan="3">
      <widget class="QGroupBox" name="groupBox">
       <property name="enabled">
@@ -271,7 +78,7 @@
      </widget>
     </item>
     <item row="5" column="0" colspan="3">
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="groupBox_debug">
       <property name="title">
        <string>Debug</string>
       </property>
@@ -362,56 +169,6 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="5" rowspan="3">
-     <widget class="QGroupBox" name="cruiseBox">
-      <property name="title">
-       <string>Cruise and Limit</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>On / Off</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioButton">
-         <property name="text">
-          <string>Cruise</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioButton_2">
-         <property name="text">
-          <string>Limit</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Speed</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="spinBox_cruise">
-         <property name="maximum">
-          <number>315</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="0" column="5">
      <layout class="QHBoxLayout" name="ignitionBox">
       <item>
@@ -446,7 +203,7 @@
          </size>
         </property>
         <property name="text">
-         <string>External Temp (°C)</string>
+         <string>External Temp</string>
         </property>
        </widget>
       </item>
@@ -460,7 +217,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>45</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -478,6 +235,9 @@
         </property>
         <property name="showGroupSeparator" stdset="0">
          <bool>true</bool>
+        </property>
+        <property name="suffix">
+         <string>°C</string>
         </property>
         <property name="minimum">
          <number>-40</number>
@@ -562,6 +322,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBox_Temp">
+            <property name="suffix">
+             <string>°C</string>
+            </property>
             <property name="minimum">
              <number>-60</number>
             </property>
@@ -716,6 +479,52 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="6" rowspan="6">
+     <widget class="QGroupBox" name="groupBox_log">
+      <property name="title">
+       <string>Log</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="pushButton_logEnable">
+           <property name="text">
+            <string>Enable</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_logClear">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="plainTextEdit_log">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="2" column="0" colspan="3">
      <layout class="QHBoxLayout" name="speedRPMBox">
       <item>
@@ -731,6 +540,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBox_Speed">
+            <property name="suffix">
+             <string> km/h</string>
+            </property>
             <property name="maximum">
              <number>315</number>
             </property>
@@ -921,9 +733,9 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QPushButton" name="pushButton_Hazard">
+        <widget class="QPushButton" name="pushButton_hazardLights">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
           <string>Hazards</string>
@@ -982,45 +794,231 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="6" rowspan="6">
-     <widget class="QGroupBox" name="groupBox_log">
+    <item row="2" column="4" rowspan="3" colspan="2">
+     <widget class="QGroupBox" name="cruiseBox">
       <property name="title">
-       <string>Log</string>
+       <string>Cruise and Limit</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QPushButton" name="pushButton_logEnable">
-           <property name="text">
-            <string>Enable</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_logClear">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>Clear</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="pushButton_cruiseEnable">
+         <property name="text">
+          <string>On / Off</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
-       <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit_log">
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="spinBox_cruiseSpeed">
+         <property name="suffix">
+          <string> km/h</string>
+         </property>
+         <property name="maximum">
+          <number>268</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="checkBox_accStatus">
+         <property name="text">
+          <string>ACC</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QRadioButton" name="radioButton_limit">
+         <property name="text">
+          <string>Limit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QGroupBox" name="accBox">
+         <property name="title">
+          <string>ACC</string>
+         </property>
+         <layout class="QVBoxLayout" name="accLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" name="accMaxDistanceVLayout">
+            <item>
+             <layout class="QHBoxLayout" name="accOnStandbyLayout"/>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="accMaxDistanceLayout">
+              <item>
+               <widget class="QLabel" name="accMaxDistanceLabel">
+                <property name="text">
+                 <string>Set Max Distance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_accSetDistance">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>5</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QSlider" name="horizontalSlider_accSetDistance">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="whatsThis">
+               <string/>
+              </property>
+              <property name="accessibleDescription">
+               <string/>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>5</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+              <property name="sliderPosition">
+               <number>1</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="accCurrentDistanceVLayout">
+            <item>
+             <layout class="QHBoxLayout" name="accCurrentDistanceLayout">
+              <item>
+               <widget class="QLabel" name="accCurrentDistanceLabel">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Set Current Distance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_accSimulateDistance">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>8</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QSlider" name="horizontalSlider_accSimulateDistance">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>8</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="sliderPosition">
+               <number>1</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBox_cruiseStandby">
          <property name="enabled">
           <bool>true</bool>
          </property>
-         <property name="lineWrapMode">
-          <enum>QPlainTextEdit::NoWrap</enum>
+         <property name="text">
+          <string>Standby</string>
          </property>
-         <property name="readOnly">
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="radioButton_cruise">
+         <property name="text">
+          <string>Cruise</string>
+         </property>
+         <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
@@ -1035,7 +1033,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1233</width>
+     <width>1224</width>
      <height>22</height>
     </rect>
    </property>
@@ -1044,6 +1042,7 @@
      <string>Settings</string>
     </property>
     <addaction name="actionShow_log"/>
+    <addaction name="actionShow_dbg"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -1060,6 +1059,22 @@
    </property>
    <property name="text">
     <string>Show log</string>
+   </property>
+  </action>
+  <action name="actionShow_debug">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show debug</string>
+   </property>
+  </action>
+  <action name="actionShow_dbg">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show debug</string>
    </property>
   </action>
  </widget>

@@ -69,22 +69,30 @@ private:
     int g_speed          = 0;
     int g_eng_temp       = 0;
     int g_fuel           = 0;
-    int g_acc_distance   = 0;
-    int g_acc_distance2  = 0;
-    int g_cruise         = 0;
     int g_dimming        = 1;
     int g_external_temp  = 0;
+    /* turns */
     bool g_turn_l        = false;
     bool g_turn_r        = false;
+    bool g_hazard        = false;
     bool g_turn_flag     = false;
+    /* doors */
     bool g_drv_door      = false;
     bool g_psg_door      = false;
     bool g_rdrv_door     = false;
     bool g_rpsg_door     = false;
     bool g_hood          = false;
     bool g_boot          = false;
-    bool g_acc_status    = false;
-    bool g_acc_standby   = true;
+    /* limit and cruise */
+    bool g_cruise        = false;
+    bool g_cruise_standby = false;
+    bool g_acc_on    = false;
+    bool g_cruise_on     = true;
+    bool g_limit_on      = false;
+    int g_cruise_speed   = 0;
+    int g_acc_distance   = 0;
+    int g_acc_distance2  = 0;
+
     bool g_speed_warning = false;
     bool g_alarm         = false;
     bool g_dpf_full      = false;
@@ -94,6 +102,7 @@ private:
     bool g_engine_fail   = false;
     bool g_airbag_fail   = false;
     bool g_brake         = false;
+    /* lights */
     bool g_rear_fog      = false;
     bool g_high_beam     = false;
     bool g_head_lights   = false;
