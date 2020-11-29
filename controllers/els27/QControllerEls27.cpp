@@ -210,7 +210,7 @@ int SerialHandler::_init(QSerialPort& serial) {
     serial_transaction(serial, "ATST01\r"); //Set timeout to hh(13) x 4 ms
     serial_transaction(serial, "ATR0\r");   //Responses on
 
-    if (serial_transaction(serial, "STI\r").second.find("STN1170") == std::string::npos) {
+    if (serial_transaction(serial, "STI\r").second.find("STN") == std::string::npos) {
         m_isElm327 = true;
     }
 
