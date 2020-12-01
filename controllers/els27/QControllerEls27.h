@@ -10,6 +10,7 @@
 #include <QMutex>
 #include <QSemaphore>
 #include <QWaitCondition>
+#include <set>
 #include "../CanController.h"
 
 struct sControllerSettings {
@@ -41,8 +42,7 @@ private:
     static constexpr int check_baudrate_timeout = 3000; ///< max els response timeout in ms
     static constexpr int set_baudrate_timeout = 1000;   ///< baud rate switch timeout in ms
 
-    static const uint32_t   baud_arr[];
-    static const int        baud_arr_sz;
+    static const std::set<uint32_t> baud_arr;
 
     sControllerSettings     m_init_settings;
     bool                    m_isElm327 = false;

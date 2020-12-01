@@ -8,7 +8,7 @@
 #include <utility>
 #include "QControllerEls27.h"
 
-const uint32_t SerialHandler::baud_arr[] = {
+const std::set<uint32_t> SerialHandler::baud_arr = {
         9600,
         19200,
         38400,
@@ -27,8 +27,6 @@ const uint32_t SerialHandler::baud_arr[] = {
         3000000,
         3500000,
         4000000 };
-
-const int SerialHandler::baud_arr_sz = sizeof(baud_arr) / sizeof(baud_arr[0]);
 
 static inline void print_buffer(int rdlen, const unsigned char *const buf, int isWrite) {
 
@@ -341,22 +339,18 @@ int SerialHandler::maximize_baudrate(QSerialPort &serial) {
         return -1;
     }
 
-    //TODO: find pos in sorted arr
     auto baud = serial.baudRate();
-    int i=0;
-    while (baud != baud_arr[i]) {
-        if(++i > baud_arr_sz) {
-            return 0; //already maximized
-        }
-    }
+    auto it = baud_arr.lower_bound(baud);
+    if(it == baud_arr.end())
+        return 0; //already maximized
 
-    for(int j = i + 1; j < baud_arr_sz; ++j) {
-        if(set_baudrate(serial, baud_arr[j])) { //if ok, goes next
-            std::cerr << "Baud rate " << baud_arr[j] << " not supported" << std::endl;
+    for(; it != baud_arr.end(); ++it) {
+        if(set_baudrate(serial, *it)) { //if ok, goes next
+            std::cerr << "Baud rate " << *it << " not supported" << std::endl;
             continue;
         }
-        std::cerr << "Baud rate " << baud_arr[j] << " supported" << std::endl;
-        baud = baud_arr[j];
+        std::cerr << "Baud rate " << *it << " supported" << std::endl;
+        baud = *it;
     }
 
     return baud;
