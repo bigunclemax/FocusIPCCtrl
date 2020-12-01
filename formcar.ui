@@ -31,7 +31,7 @@
      <number>9</number>
     </property>
     <item row="1" column="3" rowspan="3">
-     <widget class="QGroupBox" name="groupBox">
+     <widget class="QGroupBox" name="groupBox_failLamps">
       <property name="enabled">
        <bool>false</bool>
       </property>

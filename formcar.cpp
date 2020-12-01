@@ -186,12 +186,17 @@ void FormCar::setupGui() {
 
     ui->setupUi(this);
 
+    ui->groupBox_log->setVisible(false);
+    ui->groupBox_debug->setVisible(false);
+    ui->groupBox_failLamps->setVisible(false);
+
+    adjustSize();
+
     auto *v = new QRegExpValidator(QRegExp("[a-fA-F0-9]*"), this);
     ui->lineEdit_debugID->setValidator(v);
     ui->lineEdit_debugData->setValidator(v);
 
     /* Debug */
-    ui->groupBox_debug->setVisible(false);
     connect(ui->actionShow_dbg, QOverload<bool>::of(&QAction::toggled),
             [this](bool showDebug)
             {
@@ -203,7 +208,6 @@ void FormCar::setupGui() {
 
     /* Log show */
     ui->plainTextEdit_log->setFont(QFont("monospace"));
-    ui->groupBox_log->setVisible(false);
 
     connect(ui->actionShow_log, QOverload<bool>::of(&QAction::toggled),
             [this](bool showLog)
