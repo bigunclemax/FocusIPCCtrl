@@ -56,6 +56,7 @@ private:
     bool m_quit = false;
     QSemaphore usedBytes = QSemaphore(1);
     int m_transaction_res = 0;
+    std::string m_sti_str;
 };
 
 class QControllerEls27: public CanController {

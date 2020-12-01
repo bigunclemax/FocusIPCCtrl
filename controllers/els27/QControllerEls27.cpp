@@ -193,6 +193,17 @@ int SerialHandler::_init(QSerialPort& serial) {
         }
     }
 
+    serial_transaction(serial, "ATE0\r");   //echo off
+    auto sti_resp = serial_transaction(serial, "STI\r");
+    if (sti_resp.first) {
+        throw std::runtime_error("failed to execute STI command");
+    }
+    if (sti_resp.second.find("STN") == std::string::npos) {
+        m_isElm327 = true;
+    } else {
+        std::getline(std::stringstream(sti_resp.second), m_sti_str, '\r');
+    }
+
     if(m_init_settings.maximize) {
         std::cerr << "Try maximize baud rate" << std::endl;
         maximize_baudrate(serial);
@@ -200,7 +211,7 @@ int SerialHandler::_init(QSerialPort& serial) {
 
     std::cerr << "Els baud rate: " << serial.baudRate() << std::endl;
 
-    serial_transaction(serial, "ATE1\r");   //echo off
+    serial_transaction(serial, "ATE1\r");   //echo on
     serial_transaction(serial, "ATL0\r");   //linefeeds off
     serial_transaction(serial, "ATS0\r");   //spaces off
     serial_transaction(serial, "STPO\r");   //ATBI Open current protocol.
@@ -209,10 +220,6 @@ int SerialHandler::_init(QSerialPort& serial) {
     serial_transaction(serial, "ATCAF0\r"); //CAN auto formatting off
     serial_transaction(serial, "ATST01\r"); //Set timeout to hh(13) x 4 ms
     serial_transaction(serial, "ATR0\r");   //Responses on
-
-    if (serial_transaction(serial, "STI\r").second.find("STN") == std::string::npos) {
-        m_isElm327 = true;
-    }
 
     return 0;
 }
@@ -297,7 +304,7 @@ int SerialHandler::set_baudrate(QSerialPort &serial, uint32_t baud) {
     }
 
     /* Host: received a valid STI string? */
-    if(strstr(io_buff, "STN1170 v3.3.1") == nullptr) {
+    if(strstr(io_buff, m_sti_str.c_str()) == nullptr) {
         goto cleanup;
     }
 
@@ -357,7 +364,7 @@ int SerialHandler::maximize_baudrate(QSerialPort &serial) {
 
 QControllerEls27::QControllerEls27(sControllerSettings init_settings)
     : comPort(std::move(init_settings))
-{   control_msg(""); }
+{   control_msg(""); /*start SerialHandler thread*/ }
 
 void QControllerEls27::set_logger(CanLogger *logger) {
     m_logger = logger;
