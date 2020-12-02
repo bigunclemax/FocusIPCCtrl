@@ -176,7 +176,9 @@ void FormCar::setupSimulator() {
 }
 
 void FormCar::slotLog(const QString &str) {
-    ui->plainTextEdit_log->insertPlainText(str);
+    static bool f;
+    ui->plainTextEdit_log->setTextBackgroundColor((f = !f, f ? QColor(230,230,230) : Qt::white));
+    ui->plainTextEdit_log->append(str);
 }
 
 void FormCar::write(const char *msg) {
