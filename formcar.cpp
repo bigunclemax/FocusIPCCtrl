@@ -2,6 +2,7 @@
 #include <QRegExpValidator>
 #include <QRegExp>
 #include <utility>
+#include <QTimer>
 #include "ui_formcar.h"
 #include "can_sym.h"
 
@@ -203,6 +204,7 @@ void FormCar::setupGui() {
                 ui->groupBox_debug->setVisible(showDebug);
                 if(!showDebug) {
                     ui->pushButton_debugSend->setChecked(false);
+                    QTimer::singleShot(0, this, &FormCar::adjustSize);
                 }
             });
 
@@ -215,6 +217,7 @@ void FormCar::setupGui() {
                 ui->groupBox_log->setVisible(showLog);
                 if(!showLog) {
                     ui->pushButton_logEnable->toggle();
+                    QTimer::singleShot(0, this, &FormCar::adjustSize);
                 }
             });
 
