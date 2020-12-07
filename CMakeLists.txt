@@ -12,12 +12,15 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 #add_compile_definitions(DEBUG_BUFFERS DEBUG_BUFFERS_HEX) #uncomment this if need debug CAN frames
+add_subdirectory(stn1170-tools)
+add_subdirectory(staging)
 
 include_directories(${CMAKE_BINARY_DIR})
-add_executable(${CMAKE_PROJECT_NAME} main.cpp formcar.cpp dialog.cpp controllers/els27/QControllerEls27.cpp)
-target_link_libraries(${CMAKE_PROJECT_NAME} Qt5::Widgets)
+add_executable(${CMAKE_PROJECT_NAME} main.cpp formcar.cpp dialog.cpp controllers/els27/ControllerElx.cpp)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ./stn1170-tools/serial/include)
+target_link_libraries(${CMAKE_PROJECT_NAME} Qt5::Widgets stnlib serial)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	add_compile_options(-Werror=vla)
 	target_link_libraries(${CMAKE_PROJECT_NAME} pthread)
 endif()
-qt5_use_modules(${CMAKE_PROJECT_NAME} Core SerialPort)
+qt5_use_modules(${CMAKE_PROJECT_NAME} Core)

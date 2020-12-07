@@ -1,36 +1,21 @@
 //
 // Created by user on 29.10.2020.
 //
-#include <QSerialPortInfo>
 #include "dialog.h"
 #include "ui_dialog.h"
 #include <iostream>
+#include "serial/serial.h"
 
 Dialog::Dialog(QWidget *parent)
     :QDialog(parent),
     ui(new Ui::Dialog)
 {
-    auto serialEnumerator = []() {
-        const auto infos = QSerialPortInfo::availablePorts();
-        for (const QSerialPortInfo &info : infos) {
-            QString s = QObject::tr("Port: ") + info.portName() + "\n"
-                        + QObject::tr("Location: ") + info.systemLocation() + "\n"
-                        + QObject::tr("Description: ") + info.description() + "\n"
-                        + QObject::tr("Manufacturer: ") + info.manufacturer() + "\n"
-                        + QObject::tr("Serial number: ") + info.serialNumber() + "\n"
-                        + QObject::tr("Vendor Identifier: ") + (info.hasVendorIdentifier() ? QString::number(info.vendorIdentifier(), 16) : QString()) + "\n"
-                        + QObject::tr("Product Identifier: ") + (info.hasProductIdentifier() ? QString::number(info.productIdentifier(), 16) : QString()) + "\n";
 
-            std::cerr << s.toStdString() << std::endl;
-        }
-        return infos;
-    };
-
-    auto refreshComPortsList = [serialEnumerator, this]() {
-        auto serial_ports = serialEnumerator();
+    auto refreshComPortsList = [this]() {
         QStringList port_names;
-        for(const auto &port : serial_ports) {
-            port_names.push_back(port.portName());
+        for(const auto &port : serial::list_ports()) {
+            if(port.port.find("USB") != std::string::npos)
+                port_names.push_back(port.port.c_str());
         }
         ui->comboBox_comPorts->clear();
         ui->comboBox_comPorts->addItems(port_names);
