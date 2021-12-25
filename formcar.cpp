@@ -51,103 +51,103 @@ void FormCar::setupSimulator() {
 
     /* ignition and miscellaneus */
     addThread([&] {
-        package_080(static_cast<CanController *>(controller.get()),
+        package_080(controller.get(),
                     g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot, g_head_lights,
                     g_cruise && g_cruise_on, g_cruise && g_cruise_standby, g_acc_on);
     });
 
     /* speed & rpm */
     addThread([&] {
-        fakeEngineRpmAndSpeed(static_cast<CanController*>(controller.get()), g_rpm, g_speed, g_speed_warning);
+        fakeEngineRpmAndSpeed(controller.get(), g_rpm, g_speed, g_speed_warning);
     });
 
     /* fuel */
     addThread([&] {
-        fakeFuel(static_cast<CanController*>(controller.get()), g_fuel);
+        fakeFuel(controller.get(), g_fuel);
     });
 
     /* eng temp */
     addThread([&] {
-        fakeEngineTemp(static_cast<CanController*>(controller.get()), g_eng_temp);
+        fakeEngineTemp(controller.get(), g_eng_temp);
     });
 
     /* Turns */
     addThread([&] {
         if(g_turn_flag)
-            package_03a(static_cast<CanController *>(controller.get()), g_turn_l || g_hazard,
+            package_03a(controller.get(), g_turn_l || g_hazard,
                         g_turn_r || g_hazard, g_cruise_speed);
         else
-            package_03a(static_cast<CanController *>(controller.get()), false, false, g_cruise_speed);
+            package_03a(controller.get(), false, false, g_cruise_speed);
 
         g_turn_flag = !g_turn_flag;
     });
 
     /* ACC Set Distance */
     addThread([&] {
-        accSetDistance(static_cast<CanController*>(controller.get()), g_acc_distance, g_acc_distance2,
+        accSetDistance(controller.get(), g_acc_distance, g_acc_distance2,
                        g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* ACC Simulate Distance */
     addThread([&] {
-        accSimulateDistance(static_cast<CanController*>(controller.get()),
+        accSimulateDistance(controller.get(),
                             g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* Play Alarm Sound */
     addThread([&] {
-        playAlarm(static_cast<CanController*>(controller.get()), g_alarm);
+        playAlarm(controller.get(), g_alarm);
     });
 
     /* Brake status, lamps status, LCD Dimming(???) */
     addThread([&] {
-        package_290(static_cast<CanController *>(controller.get()), g_dimming);
+        package_290(controller.get(), g_dimming);
     });
 
     /* External temperature */
     addThread([&] {
-        fakeExternalTemp(static_cast<CanController*>(controller.get()), g_external_temp);
+        fakeExternalTemp(controller.get(), g_external_temp);
     });
 
     /* DPF Manager */
     addThread([&] {
-        dpfStatus(static_cast<CanController*>(controller.get()), g_dpf_full, g_dpf_regen);
+        dpfStatus(controller.get(), g_dpf_full, g_dpf_regen);
     });
 
     /* Battery status */
     addThread([&] {
-        package_508(static_cast<CanController *>(controller.get()), g_batt_fail);
+        package_508(controller.get(), g_batt_fail);
     });
 
     /* Engine status */
     addThread([&] {
-        package_250(static_cast<CanController*>(controller.get()), g_oil_fail, g_engine_fail);
+        package_250(controller.get(), g_oil_fail, g_engine_fail);
     });
 
     /* Park brake */
     addThread([&] {
-        package_240(static_cast<CanController*>(controller.get()), g_brake);
+        package_240(controller.get(), g_brake);
     });
 
     /* Airbag status */
     addThread([&] {
-        package_040(static_cast<CanController *>(controller.get()), 0, 0, 0);
+        package_040(controller.get(), 0, 0, 0);
     });
 
     /* Immobilizer status */
     addThread([&] {
-        package_1e0(static_cast<CanController *>(controller.get()), 0);
+        package_1e0(controller.get(), 0);
     });
 
     /* Hill assist status */
     addThread([&] {
-        package_1b0(static_cast<CanController *>(controller.get()), g_cruise && g_limit_on,
+        package_1b0(controller.get(), g_cruise && g_limit_on,
                     g_cruise && g_cruise_standby, 0);
     });
 
     /* High beam, rear fog, Average\instant fuel, shift advice */
     addThread([&] {
-        package_1a8(static_cast<CanController *>(controller.get()), g_high_beam, g_rear_fog, 0, 0, 0);
+        package_1a8(controller.get(), g_high_beam, g_rear_fog, 0, 0, 0);
     });
 
     /* Average\instant fuel, shift advice */
@@ -170,7 +170,7 @@ void FormCar::setupSimulator() {
             out_hex[6] = asciiHexToInt(in_str[12]) << 4 | asciiHexToInt(in_str[13]);
             out_hex[7] = asciiHexToInt(in_str[14]) << 4 | asciiHexToInt(in_str[15]);
 
-            package_debug(static_cast<CanController *>(controller.get()), id, out_hex);
+            package_debug(controller.get(), id, out_hex);
         }
     });
 }
