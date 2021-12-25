@@ -6,7 +6,7 @@
 #define FOCUSIPCCTRL_CONTROLLERELX_H
 
 #include "../CanController.h"
-#include "stn1170-tools/stnlib/SerialPort.h"
+#include "stn1170-tools/stnlib/CanDevice.h"
 #include <mutex>
 #include <atomic>
 
