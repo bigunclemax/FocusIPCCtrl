@@ -9,27 +9,27 @@
 
 ControllerElx::ControllerElx(sControllerSettings init_settings)
         : m_init_settings(std::move(init_settings))
-        , comPort(SerialPort(m_init_settings.port_name, m_init_settings.baud, 1))
+        , elxAdapter(m_init_settings.port_name, m_init_settings.baud, 1)
 {
 
-    auto sti_resp = comPort.serial_transaction("STI\r");
+    auto sti_resp = elxAdapter.serial_transaction("STI\r");
     if (sti_resp.first || sti_resp.second.find("STN") == std::string::npos) {
         m_isElm327 = true;
     }
 
     if(m_init_settings.maximize) {
-        comPort.maximize_baudrate();
+        elxAdapter.maximize_baudrate();
     }
 
-    comPort.serial_transaction("ATE1\r");   //echo on
-    comPort.serial_transaction("ATL0\r");   //linefeeds off
-    comPort.serial_transaction("ATS0\r");   //spaces off
-    comPort.serial_transaction("STPO\r");   //ATBI Open current protocol.
-    comPort.serial_transaction("ATAL\r");   //allow long messages
-    comPort.serial_transaction("ATAT0\r");  //disable adaptive timing
-    comPort.serial_transaction("ATCAF0\r"); //CAN auto formatting off
-    comPort.serial_transaction("ATST01\r"); //Set timeout to hh(13) x 4 ms
-    comPort.serial_transaction("ATR0\r");   //Responses on
+    elxAdapter.serial_transaction("ATE1\r");   //echo on
+    elxAdapter.serial_transaction("ATL0\r");   //linefeeds off
+    elxAdapter.serial_transaction("ATS0\r");   //spaces off
+    elxAdapter.serial_transaction("STPO\r");   //ATBI Open current protocol.
+    elxAdapter.serial_transaction("ATAL\r");   //allow long messages
+    elxAdapter.serial_transaction("ATAT0\r");  //disable adaptive timing
+    elxAdapter.serial_transaction("ATCAF0\r"); //CAN auto formatting off
+    elxAdapter.serial_transaction("ATST01\r"); //Set timeout to hh(13) x 4 ms
+    elxAdapter.serial_transaction("ATR0\r");   //Responses on
 }
 
 void ControllerElx::set_logger(CanLogger *logger) {
@@ -47,9 +47,9 @@ int ControllerElx::set_protocol(CanController::CAN_PROTO protocol) {
     const std::lock_guard<std::mutex> lock(mutex);
     if(CAN_MS == protocol) {
         if(m_isElm327) {
-            comPort.serial_transaction("ATSPB\r");   // User1 CAN (11* bit ID, 125* kbaud
+            elxAdapter.serial_transaction("ATSPB\r");   // User1 CAN (11* bit ID, 125* kbaud
         } else {
-            comPort.serial_transaction("STP53\r");   //ISO 15765, 11-bit Tx, 125kbps, DLC=8
+            elxAdapter.serial_transaction("STP53\r");   //ISO 15765, 11-bit Tx, 125kbps, DLC=8
         }
     }
 
@@ -85,11 +85,11 @@ int ControllerElx::send_data(std::vector<uint8_t> &data) {
     io_buff.resize(tx_size * 2 + 1);
     io_buff[tx_size * 2] = '\r';
     hex2ascii(data.data(), tx_size, io_buff.data());
-    return comPort.serial_transaction(io_buff).first;
+    return elxAdapter.serial_transaction(io_buff).first;
 }
 
 int ControllerElx::set_ecu_address(unsigned int ecu_address) {
     std::stringstream ss;
     ss << "ATSH" << std::hex << std::setfill('0') << std::setw(3) <<  ecu_address << '\r';
-    return comPort.serial_transaction(ss.str()).first;
+    return elxAdapter.serial_transaction(ss.str()).first;
 }

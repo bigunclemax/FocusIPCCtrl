@@ -37,7 +37,7 @@ private:
 
     sControllerSettings     m_init_settings;
 
-    SerialPort comPort;
+    CanDevice elxAdapter;
     std::mutex mutex;
     CanLogger* m_logger{};
     std::atomic<bool> is_logger_set = false;
