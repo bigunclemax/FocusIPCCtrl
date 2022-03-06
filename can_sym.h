@@ -17,7 +17,7 @@ void package_320_FuelLevel(CanController *controller, uint16_t fuel) {
                                  (uint8_t)(0x10u | ((fuel >> 8u) & 0xFu)),
                                  (uint8_t)(fuel & 0xFFu),
                                  0x00, 0x00, 0x00, 0x00 };
-    controller->transaction(0x320, data);
+    controller->send_package(0x320, data);
 }
 
 void package_110_EngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed, bool speed_warning) {
@@ -31,7 +31,7 @@ void package_110_EngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint
                                   (uint8_t)(rpm & 0xFFu),
                                   (uint8_t)((speed >> 8u)),
                                   (uint8_t)(speed & 0xFFu)};
-    controller->transaction(0x110, data);
+    controller->send_package(0x110, data);
 }
 
 //63-bit key battery low
@@ -45,7 +45,7 @@ void package_080(CanController *controller, bool g_drv_door, bool g_psg_door, bo
     if (g_cruise_status && g_cruise_standby) acc = 0x67;
     uint8_t door = (!g_drv_door) | (!g_psg_door << 1u) | (!g_rdrv_door << 2u) | (!g_rpsg_door << 3u) | (!g_boot << 4u) | (!g_hood << 5u);
     std::vector<uint8_t> data = { 0x77, static_cast<unsigned char>((g_head_lights << 7u) | 0x03), 0x07, door, 0xD9, acc, 0x03, 0x82 };
-    controller->transaction(0x080, data);
+    controller->send_package(0x080, data);
 }
 
 void package_360_EngineTemp(CanController *controller, uint8_t temp) {
@@ -53,7 +53,7 @@ void package_360_EngineTemp(CanController *controller, uint8_t temp) {
     temp += 60; //C
 
     std::vector<uint8_t> data = { 0xe0, 0x00, 0x38, 0x40, 0x00, 0xe0, 0x69, temp};
-    controller->transaction(0x360, data);
+    controller->send_package(0x360, data);
 }
 
 /// 2 BYTE (turns)
@@ -71,20 +71,20 @@ void package_03A(CanController *controller, bool left, bool right, uint16_t crui
     std::vector<uint8_t>  data = { 0x82, static_cast<unsigned char>(0x83u | (right << 3u) | (left << 2u)),
                                   0x00, 0x02, static_cast<unsigned char>(0x80u|(cruise_speed>133)),
                                   (uint8_t)(cruise_speed * 0x200/268), 0x00, 0x00 };
-    controller->transaction(0x03A, data);
+    controller->send_package(0x03A, data);
 }
 
 void package_040(CanController *controller, bool airbagStatus, int averageSpeed, int millageTrip) {
 
     std::vector<uint8_t> data = { 0x66, 0x07, 0x40, 0xff, 0xbe, 0x57, 0x38, 0x00 };
-    controller->transaction(0x040, data);
+    controller->send_package(0x040, data);
 }
 
 void package_020_accSimulateDistance(CanController* controller, bool accStatus, bool accStandby) {
 
     if (accStatus && !accStandby) {
         std::vector<uint8_t>  data = { 0x03, 0xd2, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00 };
-        controller->transaction(0x020, data);
+        controller->send_package(0x020, data);
     }
 }
 
@@ -105,7 +105,7 @@ void package_070_accSetDistance(CanController *controller, uint8_t accDistance, 
         data[4] = accDistance2;
     }
 
-    controller->transaction(0x070, data);
+    controller->send_package(0x070, data);
 }
 
 void package_300_playAlarm(CanController* controller, bool alarm) {
@@ -117,7 +117,7 @@ void package_300_playAlarm(CanController* controller, bool alarm) {
         data[5] = 0x80;
     }
 
-    controller->transaction(0x300, data);
+    controller->send_package(0x300, data);
 }
 
 void package_1A4_2A0_OutsideTemp(CanController* controller, uint16_t temp) {
@@ -127,17 +127,17 @@ void package_1A4_2A0_OutsideTemp(CanController* controller, uint16_t temp) {
     std::vector<uint8_t> data = { 0x00, 0x00, 0x00,
                                   static_cast<unsigned char>(((temp >> 8u) & 0xFu)),
                                   static_cast<unsigned char>((temp & 0xFFu)), 0x80, 0x00, 0x01 };
-    controller->transaction(0x1a4, data);
+    controller->send_package(0x1a4, data);
 
     data = { 0x06, 0x00, 0x00, 0x00, 0x1e, 0x36, 0x9e, 0x4c };
-    controller->transaction(0x2a0, data);
+    controller->send_package(0x2a0, data);
 }
 
 void package_1A8(CanController* controller, bool highBeam, bool rearFog, uint8_t shift_advice, uint8_t averageFuel, uint8_t instantFuel) {
 
     //0040000100ff0000
     std::vector<uint8_t> data = { 0x2e, static_cast<unsigned char>(0xc0u | highBeam), static_cast<unsigned char>(0x2cu | rearFog << 6), 0x0f, 0x8e, instantFuel, 0xe1, 0xba };
-    controller->transaction(0x1a8, data);
+    controller->send_package(0x1a8, data);
 }
 
 //limit data
@@ -149,7 +149,7 @@ void package_1B0_Lim(CanController* controller, bool limitStatus, bool limitStan
     std::vector<uint8_t> data = { 0x01, 0x52, 0x27, 0x00,
                                   static_cast<unsigned char>(0x00u | ((limitStatus << 7u) >> limitStandby)),
                                   0xc0, 0x80, 0x00 };
-    controller->transaction(0x1b0, data);
+    controller->send_package(0x1b0, data);
 }
 
 void package_1E0(CanController* controller, uint8_t immoStatus) {
@@ -157,20 +157,20 @@ void package_1E0(CanController* controller, uint8_t immoStatus) {
      //TODO: last 4 bytes looks like growing uint32
     uint8_t dimm_mode =  0x80; // 0x00 - day, 0x80 - night
     std::vector<uint8_t> data = {0x42, dimm_mode, 0x1c, 0x00, 0x12, 0x03, 0x91, 0xe3 };
-    controller->transaction(0x1e0, data);
+    controller->send_package(0x1e0, data);
 }
 
 void package_240(CanController *controller, bool brakeApplied) {
 
     std::vector<uint8_t> data = { 0x00, 0x02, 0x00, static_cast<unsigned char>(0x40u | (brakeApplied << 7u)), //0x80 - with alert
                                   0x00, 0x00, 0x00, 0x00 };
-    controller->transaction(0x240, data);
+    controller->send_package(0x240, data);
 }
 
 void package_250(CanController *controller, bool oilStatus, bool engineStatus) {
 
     std::vector<uint8_t> data = { 0x20, 0xd5, 0x14, 0x0b, 0x08, 0x13, 0x16, 0x35 };
-    controller->transaction(0x250, data);
+    controller->send_package(0x250, data);
 }
 //48 - water in fuel
 //980001080000f1d0
@@ -181,7 +181,7 @@ void package_290(CanController *controller, int dimming) {
 
     uint8_t dimLevel = (dimming) ? 0x05 : 0x06;
     std::vector<uint8_t>  data = { 0x98, 0x00, 0x01, 0x00, dimLevel, 0x00, 0x00, 0x00 };
-    controller->transaction(0x290, data);
+    controller->send_package(0x290, data);
 }
 
 void package_083_dpfStatus(CanController* controller, bool full, bool regen) {
@@ -190,24 +190,24 @@ void package_083_dpfStatus(CanController* controller, bool full, bool regen) {
     if (!full && !regen)
         dpfStatus = 0x00;
     std::vector<uint8_t>  data = { 0x00, 0x00, 0x00, 0x00, 0x00, dpfStatus, 0x00, 0x00 };
-    controller->transaction(0x083, data);
+    controller->send_package(0x083, data);
 }
 
 void package_508(CanController *controller, bool batteryStatus) {
     //byte[1] if - 0x12 day, if 0x00 - night
     std::vector<uint8_t> data = { static_cast<unsigned char>(0x10u | !batteryStatus), 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00 };
-    controller->transaction(0x508, data);
+    controller->send_package(0x508, data);
 }
 
 void package_debug(CanController *controller, uint32_t ID, std::vector<uint8_t> &data) {
 
-    controller->transaction(ID, data);
+    controller->send_package(ID, data);
 }
 
 void resetDash(CanController *controller) {
     static bool t = false;
     std::vector<uint8_t>  data = { 0x02, 0x11, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    controller->transaction(0x720, data);
+    controller->send_package(0x720, data);
 }
 
 

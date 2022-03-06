@@ -25,7 +25,6 @@ public:
     explicit ControllerElx(sControllerSettings init_settings);
     ControllerElx(ControllerElx const &) = delete;
 
-    int init() override { return 0; };
     int set_protocol(CAN_PROTO protocol) override;
     int transaction(unsigned ecu_address, std::vector<uint8_t> &data) override;
     void set_logger(CanLogger *logger) override;

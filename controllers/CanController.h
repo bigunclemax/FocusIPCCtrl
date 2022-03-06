@@ -2,14 +2,16 @@
 // Created by user on 05.10.2020.
 //
 
-#ifndef IPCFLASHER_CANCONTROLLER_H
-#define IPCFLASHER_CANCONTROLLER_H
+#ifndef CANCONTROLLER_H
+#define CANCONTROLLER_H
 
 #include <string>
 #include <functional>
 #include <vector>
 
 constexpr unsigned CAN_frame_sz = 8;
+
+typedef std::pair<uint32_t, std::vector<uint8_t>> can_packet;
 
 class CanLogger {
 public:
@@ -23,12 +25,14 @@ public:
         CAN_HS
     } CAN_PROTO;
 
-    virtual ~CanController() = default;
-    virtual int init() = 0;
+    /**
+     *  CAN bus adapter interface
+     */
     virtual int set_protocol(CAN_PROTO protocol) =0;
     virtual int transaction(unsigned ecu_address, std::vector<uint8_t> &data) =0;
     virtual void set_logger(CanLogger *logger) {};
     virtual void remove_logger() {};
+
 };
 
-#endif //IPCFLASHER_CANCONTROLLER_H
+#endif //CANCONTROLLER_H
