@@ -12,12 +12,20 @@ Dialog::Dialog(QWidget *parent)
 {
 
     auto refreshComPortsList = [this]() {
+
+        ui->comboBox_comPorts->clear();
+        if (m_selectedType == simulator) {
+            QStringList l = {"--"};
+            ui->comboBox_comPorts->addItems(l);
+            return;
+        }
+
         QStringList port_names;
         for(const auto &port : serial::list_ports()) {
             if ((port.port.find("USB") != std::string::npos) || (port.port.find("COM") != std::string::npos))
                 port_names.push_back(port.port.c_str());
         }
-        ui->comboBox_comPorts->clear();
+
         ui->comboBox_comPorts->addItems(port_names);
     };
 
@@ -91,5 +99,6 @@ Dialog::Dialog(QWidget *parent)
 
     ui->comboBox_adapterType->addItem(ToString(els27));
     ui->comboBox_adapterType->addItem(ToString(elm327));
+    ui->comboBox_adapterType->addItem(ToString(simulator));
 
 }

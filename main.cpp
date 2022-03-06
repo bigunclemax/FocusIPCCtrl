@@ -4,6 +4,7 @@
 #include "dialog.h"
 #include "controllers/CanController.h"
 #include "controllers/els27/ControllerElx.h"
+#include "controllers/virtual/ControllerVirtual.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +21,11 @@ int main(int argc, char *argv[])
         sControllerSettings controller_settings { .port_name = settings_from_dialog.port_name,
                                                   .baud = static_cast<uint32_t>(!settings_from_dialog.autodetect ? settings_from_dialog.baudrate : 0),
                                                   .maximize = settings_from_dialog.maximize };
-        controller = std::make_unique<ControllerElx>(controller_settings);
+
+        if (controller_settings.port_name == "--")
+            controller = std::make_unique<ControllerVirtual>();
+        else
+            controller = std::make_unique<ControllerElx>(controller_settings);
 
         form = std::make_unique<FormCar>(std::move(controller));
         form->setWindowTitle("Ford Focus MK3 IPC Simulator");

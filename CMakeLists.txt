@@ -16,6 +16,7 @@ add_subdirectory(stn1170-tools)
 
 include_directories(${CMAKE_BINARY_DIR})
 add_executable(${CMAKE_PROJECT_NAME} main.cpp formcar.cpp dialog.cpp controllers/els27/ControllerElx.cpp)
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE controllers/virtual/ControllerVirtual.h)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ./stn1170-tools/serial/include)
 target_link_libraries(${CMAKE_PROJECT_NAME} Qt5::Widgets stnlib serial)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

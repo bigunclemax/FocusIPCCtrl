@@ -19,7 +19,8 @@ public:
 
     enum enControllerType {
         els27  =0,
-        elm327 =1
+        elm327 =1,
+        simulator =2
     };
 
     inline const char* ToString(enControllerType v)
@@ -28,6 +29,7 @@ public:
         {
             case els27:   return "els27";
             case elm327:  return "elm327";
+            case simulator:  return "simulator";
             default:      return "";
         }
     }
