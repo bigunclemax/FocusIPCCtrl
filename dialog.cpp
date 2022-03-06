@@ -14,7 +14,7 @@ Dialog::Dialog(QWidget *parent)
     auto refreshComPortsList = [this]() {
         QStringList port_names;
         for(const auto &port : serial::list_ports()) {
-            if(port.port.find("USB") != std::string::npos)
+            if ((port.port.find("USB") != std::string::npos) || (port.port.find("COM") != std::string::npos))
                 port_names.push_back(port.port.c_str());
         }
         ui->comboBox_comPorts->clear();
