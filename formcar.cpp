@@ -73,11 +73,8 @@ void FormCar::setupSimulator() {
 
     /* Turns */
     addThread([&] {
-        if(g_turn_flag)
-            package_03a(controller.get(), g_turn_l || g_hazard,
-                        g_turn_r || g_hazard, g_cruise_speed);
-        else
-            package_03a(controller.get(), false, false, g_cruise_speed);
+        package_03a(controller.get(), g_turn_flag && (g_turn_l || g_hazard),
+                    g_turn_flag && (g_turn_r || g_hazard), g_cruise_speed);
 
         g_turn_flag = !g_turn_flag;
     });
