@@ -151,7 +151,8 @@ void package_1b0(CanController* controller, bool limitStatus, bool limitStandby,
 void package_1e0(CanController* controller, uint8_t immoStatus) {
 
      //TODO: last 4 bytes looks like growing uint32
-    std::vector<uint8_t> data = { 0x42, 0x80, 0x1c, 0x00, 0x12, 0x03, 0x91, 0xe3 };
+    uint8_t dimm_mode =  0x80; // 0x00 - day, 0x80 - night
+    std::vector<uint8_t> data = {0x42, dimm_mode, 0x1c, 0x00, 0x12, 0x03, 0x91, 0xe3 };
     controller->transaction(0x1e0, data);
 }
 
@@ -189,8 +190,8 @@ void dpfStatus(CanController* controller, bool full, bool regen) {
 }
 
 void package_508(CanController *controller, bool batteryStatus) {
-
-    std::vector<uint8_t> data = { static_cast<unsigned char>(0x10u | !batteryStatus), 0x12, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00 };
+    //byte[1] if - 0x12 day, if 0x00 - night
+    std::vector<uint8_t> data = { static_cast<unsigned char>(0x10u | !batteryStatus), 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00 };
     controller->transaction(0x508, data);
 }
 
