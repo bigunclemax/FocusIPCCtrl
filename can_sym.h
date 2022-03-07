@@ -97,14 +97,12 @@ void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accD
         accDistance = accDistance * 0x10;
         data[2] = accDistance;
         data[4] = 0x11;
-        controller->transaction(0x070, data);
     }
     else if (accStatus) {
         accDistance2 = 0xEF + (accDistance2 * 2);
         data[2] = 0x22;
         data[3] = 0x22;
         data[4] = accDistance2;
-        controller->transaction(0x070, data);
     }
 
     controller->transaction(0x070, data);
