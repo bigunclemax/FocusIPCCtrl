@@ -58,22 +58,22 @@ void FormCar::setupSimulator() {
 
     /* speed & rpm */
     addThread([&] {
-        fakeEngineRpmAndSpeed(controller.get(), g_rpm, g_speed, g_speed_warning);
+        package_110_EngineRpmAndSpeed(controller.get(), g_rpm, g_speed, g_speed_warning);
     });
 
     /* fuel */
     addThread([&] {
-        fakeFuel(controller.get(), g_fuel);
+        package_320_FuelLevel(controller.get(), g_fuel);
     });
 
     /* eng temp */
     addThread([&] {
-        fakeEngineTemp(controller.get(), g_eng_temp);
+        package_360_EngineTemp(controller.get(), g_eng_temp);
     });
 
     /* Turns */
     addThread([&] {
-        package_03a(controller.get(), g_turn_flag && (g_turn_l || g_hazard),
+        package_03A(controller.get(), g_turn_flag && (g_turn_l || g_hazard),
                     g_turn_flag && (g_turn_r || g_hazard), g_cruise_speed);
 
         g_turn_flag = !g_turn_flag;
@@ -81,19 +81,19 @@ void FormCar::setupSimulator() {
 
     /* ACC Set Distance */
     addThread([&] {
-        accSetDistance(controller.get(), g_acc_distance, g_acc_distance2,
-                       g_cruise && g_acc_on, g_cruise_standby);
+        package_070_accSetDistance(controller.get(), g_acc_distance, g_acc_distance2,
+                                   g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* ACC Simulate Distance */
     addThread([&] {
-        accSimulateDistance(controller.get(),
-                            g_cruise && g_acc_on, g_cruise_standby);
+        package_020_accSimulateDistance(controller.get(),
+                                        g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* Play Alarm Sound */
     addThread([&] {
-        playAlarm(controller.get(), g_alarm);
+        package_300_playAlarm(controller.get(), g_alarm);
     });
 
     /* Brake status, lamps status, LCD Dimming(???) */
@@ -103,12 +103,12 @@ void FormCar::setupSimulator() {
 
     /* External temperature */
     addThread([&] {
-        fakeExternalTemp(controller.get(), g_external_temp);
+        package_1A4_2A0_OutsideTemp(controller.get(), g_external_temp);
     });
 
     /* DPF Manager */
     addThread([&] {
-        dpfStatus(controller.get(), g_dpf_full, g_dpf_regen);
+        package_083_dpfStatus(controller.get(), g_dpf_full, g_dpf_regen);
     });
 
     /* Battery status */
@@ -133,21 +133,21 @@ void FormCar::setupSimulator() {
 
     /* Immobilizer status */
     addThread([&] {
-        package_1e0(controller.get(), 0);
+        package_1E0(controller.get(), 0);
     });
 
     /* Hill assist status */
     addThread([&] {
-        package_1b0(controller.get(), g_cruise && g_limit_on,
-                    g_cruise && g_cruise_standby, 0);
+        package_1B0_Lim(controller.get(), g_cruise && g_limit_on,
+                        g_cruise && g_cruise_standby, 0);
     });
 
     /* High beam, rear fog, Average\instant fuel, shift advice */
     addThread([&] {
-        package_1a8(controller.get(), g_high_beam, g_rear_fog, 0, 0, 0);
+        package_1A8(controller.get(), g_high_beam, g_rear_fog, 0, 0, 0);
     });
 
-    /* Average\instant fuel, shift advice */
+    /* Send custom package */
     addThread([&] {
         if (g_debug) {
             bool bStatus = false;

@@ -9,7 +9,7 @@
 #include "controllers/CanController.h"
 #include <vector>
 
-void fakeFuel(CanController *controller, uint16_t fuel) {
+void package_320_FuelLevel(CanController *controller, uint16_t fuel) {
 
     fuel = 0xf00 - (0x2a + fuel*235/50);
 
@@ -20,7 +20,7 @@ void fakeFuel(CanController *controller, uint16_t fuel) {
     controller->transaction(0x320, data);
 }
 
-void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed, bool speed_warning) {
+void package_110_EngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t speed, bool speed_warning) {
 
     uint8_t warning = (speed_warning) ? 0xdd : 0xc0;
     rpm /= 2;
@@ -37,10 +37,9 @@ void fakeEngineRpmAndSpeed(CanController *controller, uint16_t rpm, uint16_t spe
 //63-bit key battery low
 //55-bit low beam
 
-void
-package_080(CanController *controller, bool g_drv_door, bool g_psg_door, bool g_rdrv_door, bool g_rpsg_door,
-            bool g_hood, bool g_boot, bool g_head_lights, bool g_cruise_status, bool g_cruise_standby,
-            bool g_acc_on) {
+void package_080(CanController *controller, bool g_drv_door, bool g_psg_door, bool g_rdrv_door, bool g_rpsg_door,
+                 bool g_hood, bool g_boot, bool g_head_lights, bool g_cruise_status, bool g_cruise_standby,
+                 bool g_acc_on) {
 
     uint8_t acc = (g_cruise_status && !g_acc_on) ? 0xa7 : 0x07;
     if (g_cruise_status && g_cruise_standby) acc = 0x67;
@@ -49,7 +48,7 @@ package_080(CanController *controller, bool g_drv_door, bool g_psg_door, bool g_
     controller->transaction(0x080, data);
 }
 
-void fakeEngineTemp(CanController *controller, uint8_t temp) {
+void package_360_EngineTemp(CanController *controller, uint8_t temp) {
 
     temp += 60; //C
 
@@ -67,7 +66,7 @@ void fakeEngineTemp(CanController *controller, uint8_t temp) {
 
 /// 6 BYTE
 //xx - speed from 0-133 or 134-268
-void package_03a(CanController *controller, bool left, bool right, uint16_t cruise_speed) {
+void package_03A(CanController *controller, bool left, bool right, uint16_t cruise_speed) {
     //FIXME: cruise formula not accurate, i.e. it fails on 53 km
     std::vector<uint8_t>  data = { 0x82, static_cast<unsigned char>(0x83u | (right << 3u) | (left << 2u)),
                                   0x00, 0x02, static_cast<unsigned char>(0x80u|(cruise_speed>133)),
@@ -81,7 +80,7 @@ void package_040(CanController *controller, bool airbagStatus, int averageSpeed,
     controller->transaction(0x040, data);
 }
 
-void accSimulateDistance(CanController* controller, bool accStatus, bool accStandby) {
+void package_020_accSimulateDistance(CanController* controller, bool accStatus, bool accStandby) {
 
     if (accStatus && !accStandby) {
         std::vector<uint8_t>  data = { 0x03, 0xd2, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00 };
@@ -89,7 +88,8 @@ void accSimulateDistance(CanController* controller, bool accStatus, bool accStan
     }
 }
 
-void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accDistance2, bool accStatus, bool accStandby) {
+void package_070_accSetDistance(CanController *controller, uint8_t accDistance, uint8_t accDistance2, bool accStatus,
+                                bool accStandby) {
 
     std::vector<uint8_t>  data = { 0x00, 0x9C, 0x04, 0x80, 0x00, 0xF4, 0xE8, 0x54 };
 
@@ -108,7 +108,7 @@ void accSetDistance(CanController* controller, uint8_t accDistance, uint8_t accD
     controller->transaction(0x070, data);
 }
 
-void playAlarm(CanController* controller, bool alarm) {
+void package_300_playAlarm(CanController* controller, bool alarm) {
 
     if (alarm) {
         std::vector<uint8_t>  data = { 0x00, 0xC0, 0x80, 0x21, 0xC0, 0x80, 0x00, 0x00 };
@@ -116,7 +116,7 @@ void playAlarm(CanController* controller, bool alarm) {
     }
 }
 
-void fakeExternalTemp(CanController* controller, uint16_t temp) {
+void package_1A4_2A0_OutsideTemp(CanController* controller, uint16_t temp) {
 
     temp = 0x0160 + (temp + 40) * 4;
 
@@ -129,7 +129,7 @@ void fakeExternalTemp(CanController* controller, uint16_t temp) {
     controller->transaction(0x2a0, data);
 }
 
-void package_1a8(CanController* controller, bool highBeam, bool rearFog, uint8_t shift_advice, uint8_t averageFuel, uint8_t instantFuel) {
+void package_1A8(CanController* controller, bool highBeam, bool rearFog, uint8_t shift_advice, uint8_t averageFuel, uint8_t instantFuel) {
 
     //0040000100ff0000
     std::vector<uint8_t> data = { 0x2e, static_cast<unsigned char>(0xc0u | highBeam), static_cast<unsigned char>(0x2cu | rearFog << 6), 0x0f, 0x8e, instantFuel, 0xe1, 0xba };
@@ -140,7 +140,7 @@ void package_1a8(CanController* controller, bool highBeam, bool rearFog, uint8_t
 //80-enabled
 //40-standby
 //00-off
-void package_1b0(CanController* controller, bool limitStatus, bool limitStandby, uint8_t hillAssistStatus) {
+void package_1B0_Lim(CanController* controller, bool limitStatus, bool limitStandby, uint8_t hillAssistStatus) {
 
     std::vector<uint8_t> data = { 0x01, 0x52, 0x27, 0x00,
                                   static_cast<unsigned char>(0x00u | ((limitStatus << 7u) >> limitStandby)),
@@ -148,7 +148,7 @@ void package_1b0(CanController* controller, bool limitStatus, bool limitStandby,
     controller->transaction(0x1b0, data);
 }
 
-void package_1e0(CanController* controller, uint8_t immoStatus) {
+void package_1E0(CanController* controller, uint8_t immoStatus) {
 
      //TODO: last 4 bytes looks like growing uint32
     uint8_t dimm_mode =  0x80; // 0x00 - day, 0x80 - night
@@ -180,7 +180,7 @@ void package_290(CanController *controller, int dimming) {
     controller->transaction(0x290, data);
 }
 
-void dpfStatus(CanController* controller, bool full, bool regen) {
+void package_083_dpfStatus(CanController* controller, bool full, bool regen) {
 
     uint8_t dpfStatus = (full) ? 0x88 : 0x66;
     if (!full && !regen)
