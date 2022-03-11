@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>366</width>
-    <height>188</height>
+    <height>219</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,6 +59,13 @@
       <string>Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="checkBox_maximize">
+        <property name="text">
+         <string>Maximize Speed</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -95,18 +102,14 @@
          <string>Auto detect baud</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="checkBox_maximize">
-        <property name="text">
-         <string>Maximize Speed</string>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
+       <widget class="QComboBox" name="comboBox_baudrate"/>
+      </item>
+      <item row="2" column="1">
        <widget class="QSpinBox" name="spinBox_baudrate">
         <property name="enabled">
          <bool>false</bool>

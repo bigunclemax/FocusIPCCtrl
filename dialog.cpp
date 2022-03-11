@@ -54,6 +54,7 @@ Dialog::Dialog(QWidget *parent)
 
     connect(ui->checkBox_autodetect, &QCheckBox::toggled, this, [this](bool checked) {
         ui->spinBox_baudrate->setEnabled(!checked);
+        ui->comboBox_baudrate->setEnabled(!checked);
     });
 
     connect(ui->comboBox_comPorts, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -63,7 +64,31 @@ Dialog::Dialog(QWidget *parent)
         refreshComPortsList();
     });
 
-    ui->spinBox_baudrate->setValue(38400);
+    connect(ui->comboBox_baudrate, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [this](int index)
+            {
+                if ("Custom" == ui->comboBox_baudrate->currentText()) {
+                    ui->spinBox_baudrate->setVisible(true);
+                } else {
+                    ui->spinBox_baudrate->setVisible(false);
+                    ui->spinBox_baudrate->setValue(ui->comboBox_baudrate->currentText().toInt());
+                }
+            });
+
+    ui->comboBox_baudrate->addItem("9600");
+    ui->comboBox_baudrate->addItem("19200");
+    ui->comboBox_baudrate->addItem("38400");
+    ui->comboBox_baudrate->addItem("57600");
+    ui->comboBox_baudrate->addItem("115200");
+    ui->comboBox_baudrate->addItem("500000");
+    ui->comboBox_baudrate->addItem("1000000");
+    ui->comboBox_baudrate->addItem("1500000");
+    ui->comboBox_baudrate->addItem("2000000");
+    ui->comboBox_baudrate->addItem("4000000");
+    ui->comboBox_baudrate->addItem("Custom");
+
+    ui->comboBox_baudrate->setCurrentIndex(2);
+
     ui->comboBox_adapterType->addItem(ToString(els27));
     ui->comboBox_adapterType->addItem(ToString(elm327));
 
