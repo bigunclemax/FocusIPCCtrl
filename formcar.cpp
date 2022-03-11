@@ -91,7 +91,7 @@ void FormCar::setupSimulator() {
                                         g_cruise && g_acc_on, g_cruise_standby);
     });
 
-    /* Play Alarm Sound */
+    /* Alarm Sound and ParkPilot status */
     addThread([&] {
         package_300_playAlarm(controller.get(), g_alarm);
     });

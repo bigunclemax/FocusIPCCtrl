@@ -110,10 +110,14 @@ void package_070_accSetDistance(CanController *controller, uint8_t accDistance, 
 
 void package_300_playAlarm(CanController* controller, bool alarm) {
 
+    std::vector<uint8_t>  data = { 0x00, 0x00, 0x80, 0x21, 0xC0, 0x00, 0x00, 0x00 };
+
     if (alarm) {
-        std::vector<uint8_t>  data = { 0x00, 0xC0, 0x80, 0x21, 0xC0, 0x80, 0x00, 0x00 };
-        controller->transaction(0x300, data);
+        data[1] = 0xC0;
+        data[5] = 0x80;
     }
+
+    controller->transaction(0x300, data);
 }
 
 void package_1A4_2A0_OutsideTemp(CanController* controller, uint16_t temp) {
