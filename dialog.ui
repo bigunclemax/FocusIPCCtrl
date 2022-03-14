@@ -164,6 +164,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>comboBox_adapterType</tabstop>
+  <tabstop>comboBox_comPorts</tabstop>
+  <tabstop>pushButton_comRefresh</tabstop>
+  <tabstop>checkBox_maximize</tabstop>
+  <tabstop>comboBox_baudrate</tabstop>
+  <tabstop>checkBox_autodetect</tabstop>
+  <tabstop>spinBox_baudrate</tabstop>
+  <tabstop>pushButton_OK</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
