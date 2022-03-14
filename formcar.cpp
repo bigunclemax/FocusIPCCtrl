@@ -385,7 +385,27 @@ void FormCar::setupGui() {
 void FormCar::start() {
     /* reset dash */
     resetDash(static_cast<CanController*>(static_cast<CanController*>(controller.get())));
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    // measure time
+    const int test_cnt = 5;
+    auto t1 = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < test_cnt; i++) {
+        std::vector<uint8_t> data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        controller->transaction(0x000, data);
+    }
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto ms_int = duration_cast<std::chrono::microseconds>(t2 - t1);
+
+    auto avg_send_package_time = ms_int.count() / test_cnt;
+    auto thread_interval = avg_send_package_time * (m_threads.size());
+
+    for(auto &t :m_threads)
+        t->setInterval(thread_interval + 10000);
+
+    printf("AVG send package time %ld usec, thread interval %ld usec, thread count %ld\n", avg_send_package_time,
+           thread_interval, m_threads.size());
+
     /* start threads */
     startThreads();
 }

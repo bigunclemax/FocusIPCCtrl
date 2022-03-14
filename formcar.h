@@ -18,8 +18,8 @@ public:
     void run() override {
         do {
             laterCB();
-            usleep(interval);
-        } while (!isInterruptionRequested() && interval);
+            usleep(m_interval);
+        } while (!isInterruptionRequested() && m_interval);
     }
 
     template <typename F, typename... Args>
@@ -28,10 +28,13 @@ public:
         laterCB = [=] { f(args...); };
     }
 
-    explicit IPCthread(unsigned long interval) : interval(interval) {};
+    explicit IPCthread(unsigned long interval) : m_interval(interval) {};
+    void setInterval(unsigned long interval) {
+        m_interval = interval;
+    };
 private:
     std::function<void()> laterCB;
-    unsigned long interval;
+    unsigned long m_interval;
 };
 
 class FormCar : public QMainWindow, public CanLogger
