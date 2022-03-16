@@ -8,34 +8,11 @@
 #include <thread>
 #include "controllers/CanController.h"
 
+#include "threads_manager.h"
+
 namespace Ui {
 class FormCar;
 }
-
-class IPCthread : public QThread{
-    Q_OBJECT
-public:
-    void run() override {
-        do {
-            laterCB();
-            usleep(m_interval);
-        } while (!isInterruptionRequested() && m_interval);
-    }
-
-    template <typename F, typename... Args>
-    void registerCallback(F f, Args&&... args)
-    {
-        laterCB = [=] { f(args...); };
-    }
-
-    explicit IPCthread(unsigned long interval) : m_interval(interval) {};
-    void setInterval(unsigned long interval) {
-        m_interval = interval;
-    };
-private:
-    std::function<void()> laterCB;
-    unsigned long m_interval;
-};
 
 class FormCar : public QMainWindow, public CanLogger
 {
@@ -58,15 +35,11 @@ private:
     void setupGui();
 	void setupSimulator();
 
-	void addThread( std::function<void(void)> f, unsigned long interval = 250000);
-	void startThreads();
-    void stopThreads();
-
     void write(const char *msg) override;
 
+    ThreadsManager m_tm;
     std::unique_ptr<CanController> controller;
-    std::vector<std::unique_ptr<IPCthread>> m_threads;
-    std::unique_ptr<IPCthread> m_sym_init_t;
+    std::thread m_sym_init_t;
 
     int g_rpm            = 0;
     int g_speed          = 0;

@@ -12,37 +12,22 @@ FormCar::FormCar(std::unique_ptr<CanController> controller, QWidget *parent):
         controller(std::move(controller))
 {
     connect(this, &FormCar::signalLog, this, &FormCar::slotLog, Qt::QueuedConnection);
-    m_sym_init_t = std::make_unique<IPCthread>(0);
-    m_sym_init_t->registerCallback([&] {
+
+    m_sym_init_t = std::thread([this](){
         setupSimulator();
         start();
     });
-    m_sym_init_t->start();
 
     setupGui();
 }
 
 FormCar::~FormCar()
 {
+    if (m_sym_init_t.joinable())
+        m_sym_init_t.join();
+
     stop();
 	delete ui;
-}
-
-void FormCar::addThread(std::function<void(void)> f, unsigned long interval) {
-    auto& t = m_threads.emplace_back(std::make_unique<IPCthread>(interval));
-    t->registerCallback(std::move(f));
-}
-
-void FormCar::startThreads() {
-    for(auto &t :m_threads)
-        t->start();
-}
-
-void FormCar::stopThreads() {
-    for(auto &t :m_threads) {
-        t->requestInterruption();
-        t->wait();
-    }
 }
 
 void FormCar::setupSimulator() {
@@ -50,29 +35,29 @@ void FormCar::setupSimulator() {
     controller->set_protocol(CanController::CAN_MS);
 
     /* ignition and miscellaneus */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_080(controller.get(),
                     g_drv_door, g_psg_door, g_rdrv_door, g_rpsg_door, g_hood, g_boot, g_head_lights,
                     g_cruise && g_cruise_on, g_cruise && g_cruise_standby, g_acc_on);
     });
 
     /* speed & rpm */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_110_EngineRpmAndSpeed(controller.get(), g_rpm, g_speed, g_speed_warning);
     });
 
     /* fuel */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_320_FuelLevel(controller.get(), g_fuel);
     });
 
     /* eng temp */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_360_EngineTemp(controller.get(), g_eng_temp);
     });
 
     /* Turns */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_03A(controller.get(), g_turn_flag && (g_turn_l || g_hazard),
                     g_turn_flag && (g_turn_r || g_hazard), g_cruise_speed);
 
@@ -80,75 +65,75 @@ void FormCar::setupSimulator() {
     });
 
     /* ACC Set Distance */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_070_accSetDistance(controller.get(), g_acc_distance, g_acc_distance2,
                                    g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* ACC Simulate Distance */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_020_accSimulateDistance(controller.get(),
                                         g_cruise && g_acc_on, g_cruise_standby);
     });
 
     /* Alarm Sound and ParkPilot status */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_300_playAlarm(controller.get(), g_alarm);
     });
 
     /* Brake status, lamps status, LCD Dimming(???) */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_290(controller.get(), g_dimming);
     });
 
     /* External temperature */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_1A4_2A0_OutsideTemp(controller.get(), g_external_temp);
     });
 
     /* DPF Manager */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_083_dpfStatus(controller.get(), g_dpf_full, g_dpf_regen);
     });
 
     /* Battery status */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_508(controller.get(), g_batt_fail);
     });
 
     /* Engine status */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_250(controller.get(), g_oil_fail, g_engine_fail);
     });
 
     /* Park brake */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_240(controller.get(), g_brake);
     });
 
     /* Airbag status */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_040(controller.get(), 0, 0, 0);
     });
 
     /* Immobilizer status */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_1E0(controller.get(), 0);
     });
 
     /* Hill assist status */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_1B0_Lim(controller.get(), g_cruise && g_limit_on,
                         g_cruise && g_cruise_standby, 0);
     });
 
     /* High beam, rear fog, Average\instant fuel, shift advice */
-    addThread([&] {
+    m_tm.addThread([&] {
         package_1A8(controller.get(), g_high_beam, g_rear_fog, 0, 0, 0);
     });
 
     /* Send custom package */
-    addThread([&] {
+    m_tm.addThread([&] {
         if (g_debug) {
             bool bStatus = false;
             auto id = ui->lineEdit_debugID->text().toUInt(&bStatus,16);
@@ -395,22 +380,20 @@ void FormCar::start() {
         controller->transaction(0x000, data);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
-    auto ms_int = duration_cast<std::chrono::microseconds>(t2 - t1);
+    auto us_int = duration_cast<std::chrono::microseconds>(t2 - t1);
 
-    auto avg_send_package_time = ms_int.count() / test_cnt;
-    auto thread_interval = avg_send_package_time * (m_threads.size());
+    auto avg_send_package_time = us_int.count() / test_cnt;
+    auto thread_interval = avg_send_package_time * (m_tm.threadsCount());
 
-    for(auto &t :m_threads)
-        t->setInterval(thread_interval + 10000);
+    m_tm.setThreadsInterval(std::chrono::microseconds(thread_interval) + 10ms);
 
     printf("AVG send package time %ld usec, thread interval %ld usec, thread count %ld\n", avg_send_package_time,
-           thread_interval, m_threads.size());
+           thread_interval, m_tm.threadsCount());
 
     /* start threads */
-    startThreads();
+    m_tm.startThreads();
 }
 
 void FormCar::stop() {
-    /* start threads */
-    stopThreads();
+    m_tm.stopThreads();
 }
