@@ -9,6 +9,7 @@
 #include "controllers/CanController.h"
 
 #include "threads_manager.h"
+#include "scheduler.h"
 
 namespace Ui {
 class FormCar;
@@ -38,7 +39,8 @@ private:
     void write(const char *msg) override;
 
     ThreadsManager m_tm;
-    std::unique_ptr<CanController> controller;
+    std::unique_ptr<CanController> m_controller;
+    std::unique_ptr<Scheduler> m_scheduler;
     std::thread m_sym_init_t;
 
     int g_rpm            = 0;
